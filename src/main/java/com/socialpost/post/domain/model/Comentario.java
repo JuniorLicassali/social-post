@@ -7,7 +7,6 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.MapsId;
 import javax.persistence.OneToOne;
 
 import org.hibernate.annotations.CreationTimestamp;
@@ -29,8 +28,11 @@ public class Comentario {
 	@Column(nullable = false, columnDefinition = "datetime")
 	private OffsetDateTime dataComentario;
 	
+//	@OneToMany
+//	private Postagem postagem;
+	
 	@OneToOne
-	@MapsId
+//	@MapsId
 	private Usuario usuario;
 	
 }
