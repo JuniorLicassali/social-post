@@ -4,6 +4,7 @@ import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.socialpost.post.domain.exception.ComentarioNaoEncontradoException;
 import com.socialpost.post.domain.exception.PostagemNaoEncontradaException;
@@ -14,12 +15,15 @@ import com.socialpost.post.domain.repository.ComentarioRepository;
 @Service
 public class ComentarioPostagemService {
 	
+	public static final String COMENATARIO_NAO_ENCONTRADO = "Comentario não encontrado";
+	
 	@Autowired
 	private ComentarioRepository comentarioRepository;
 	
 	@Autowired
 	private PostagemService postagemService;
 	
+	@Transactional
 	public Comentario salvar(Long postagemId, Comentario comentario) {
 		Postagem postagem = postagemService.buscarOuFalhar(postagemId);
 		if(postagem != null) {
@@ -32,8 +36,17 @@ public class ComentarioPostagemService {
 		}
 	}
 
-	public void excluir(Long comentarioId) {
-		comentarioRepository.deleteById(comentarioId);
+	@Transactional
+	public void excluir(Long postagemId, Long comentarioId) {
+		Postagem postagem = postagemService.buscarOuFalhar(postagemId);
+        Comentario comentario = buscarOuFalhar(comentarioId);
+        
+        if (postagem.removerComentario(comentario)) {
+            comentarioRepository.deleteById(comentarioId);
+            postagemService.salvar(postagem);
+        } else {
+        	throw new ComentarioNaoEncontradoException(COMENATARIO_NAO_ENCONTRADO);
+        }
 	}
 	
 	public List<Comentario> buscarTodosOsComentario(Long postagemId) {

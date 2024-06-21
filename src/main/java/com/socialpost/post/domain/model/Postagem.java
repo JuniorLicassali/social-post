@@ -40,4 +40,8 @@ public class Postagem {
 					inverseJoinColumns = @JoinColumn(name = "comentario_id"))
 	private List<Comentario> comentarios = new ArrayList<>();
 	
+	public boolean removerComentario(Comentario comentario) {
+		return getComentarios().remove(comentario);
+	}
+	
 }

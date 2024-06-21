@@ -1,6 +1,5 @@
 package com.socialpost.post.domain.service;
 
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.dao.EmptyResultDataAccessException;
@@ -10,6 +9,7 @@ import org.springframework.transaction.annotation.Transactional;
 import com.socialpost.post.domain.exception.EntidadeEmUsoException;
 import com.socialpost.post.domain.exception.GrupoNaoEncontradoException;
 import com.socialpost.post.domain.model.Grupo;
+import com.socialpost.post.domain.model.Permissao;
 import com.socialpost.post.domain.repository.GrupoRepository;
 
 @Service
@@ -20,6 +20,9 @@ public class CadastroGrupoService {
 
 	@Autowired
 	private GrupoRepository grupoRepository;
+	
+	@Autowired
+	private CadastroPermissaoService cadastroPermissaoService;
 	
 	@Transactional
 	public Grupo salvar(Grupo grupo) {
@@ -40,6 +43,22 @@ public class CadastroGrupoService {
 				String.format(MSG_GRUPO_EM_USO, grupoId));
 		}
 		
+	}
+	
+	@Transactional
+	public void associarPermissao(Long grupoId, Long permissaoId) {
+		Grupo grupo = buscarOuFalhar(grupoId);
+		Permissao permissao = cadastroPermissaoService.buscarOuFalhar(permissaoId);
+		
+		grupo.adicionarPemissao(permissao);
+	}
+	
+	@Transactional
+	public void desassociarPermissao(Long grupoId, Long permissaoId) {
+		Grupo grupo = buscarOuFalhar(grupoId);
+		Permissao permissao = cadastroPermissaoService.buscarOuFalhar(permissaoId);
+		
+		grupo.removerPermissao(permissao);
 	}
 	
 	public Grupo buscarOuFalhar(Long grupoId) {

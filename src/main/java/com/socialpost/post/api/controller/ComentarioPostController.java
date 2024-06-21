@@ -4,6 +4,7 @@ import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -31,6 +32,12 @@ public class ComentarioPostController {
 	@ResponseStatus(HttpStatus.CREATED)
 	public Comentario adicionar(@PathVariable Long postagemId, @RequestBody Comentario comentario) {
 		return comentarioPostagemService.salvar(postagemId, comentario);
+	}
+	
+	@DeleteMapping("/{comentarioId}")
+	@ResponseStatus(HttpStatus.NO_CONTENT)
+	public void excluir(@PathVariable Long postagemId, @PathVariable Long comentarioId) {
+		comentarioPostagemService.excluir(postagemId, comentarioId);
 	}
 
 }
