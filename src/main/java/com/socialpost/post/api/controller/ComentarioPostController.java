@@ -13,6 +13,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.socialpost.post.api.assembler.ComentarioDTOAssembler;
+import com.socialpost.post.api.dto.ComentarioDTO;
 import com.socialpost.post.domain.model.Comentario;
 import com.socialpost.post.domain.service.ComentarioPostagemService;
 
@@ -23,15 +25,22 @@ public class ComentarioPostController {
 	@Autowired
 	private ComentarioPostagemService comentarioPostagemService;
 	
+	@Autowired
+	private ComentarioDTOAssembler comentarioDTOAssembler;
+	
 	@GetMapping
-	public List<Comentario> listar(@PathVariable Long postagemId) {
-		return comentarioPostagemService.buscarTodosOsComentario(postagemId);
+	public List<ComentarioDTO> listar(@PathVariable Long postagemId) {
+		List<Comentario> comentarios = comentarioPostagemService.buscarTodosOsComentario(postagemId);
+		
+		return comentarioDTOAssembler.toColletionDTO(comentarios);
 	}
 	
 	@PostMapping
 	@ResponseStatus(HttpStatus.CREATED)
-	public Comentario adicionar(@PathVariable Long postagemId, @RequestBody Comentario comentario) {
-		return comentarioPostagemService.salvar(postagemId, comentario);
+	public ComentarioDTO adicionar(@PathVariable Long postagemId, @RequestBody Comentario comentario) {
+		comentarioPostagemService.salvar(postagemId, comentario);
+		
+		return comentarioDTOAssembler.toDTO(comentario);
 	}
 	
 	@DeleteMapping("/{comentarioId}")

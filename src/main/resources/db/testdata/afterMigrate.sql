@@ -26,7 +26,4 @@ insert into usuario (nome, email, senha, data_cadastro) values ('Sebastiao da Ga
 
 insert into grupo_permissao (grupo_id, permissao_id) values (1, 1), (1, 2), (2, 1), (2, 2); 
 
-insert into postagem (data_postagem, descricao) values ('2019-11-03 02:00:30', 'Dólar em alta, sobe para 4,20');
-
-
-
+insert into postagem (data_postagem, descricao, autor_id) values ('2019-11-03 02:00:30', 'Dólar em alta, sobe para 4,20', 1);

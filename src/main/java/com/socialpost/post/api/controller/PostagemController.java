@@ -14,6 +14,10 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.socialpost.post.api.assembler.PostagemDTOAssembler;
+import com.socialpost.post.api.assembler.PostagemResumoDTOAssembler;
+import com.socialpost.post.api.dto.PostagemDTO;
+import com.socialpost.post.api.dto.PostagemResumoDTO;
 import com.socialpost.post.domain.model.Postagem;
 import com.socialpost.post.domain.repository.PostagemRepository;
 import com.socialpost.post.domain.service.PostagemService;
@@ -28,14 +32,23 @@ public class PostagemController {
 	@Autowired
 	private PostagemService postagemService;
 	
+	@Autowired
+	private PostagemDTOAssembler postagemDTOAssembler;
+	
+	@Autowired
+	private PostagemResumoDTOAssembler postagemResumoDTOAssembler;
+	
 	@GetMapping
-	public List<Postagem> listar() {
-		return postagemRepository.findAll();
+	public List<PostagemResumoDTO> listar() {
+		List<Postagem> postagens = postagemRepository.findAll();
+		return postagemResumoDTOAssembler.toColletionDTO(postagens);
 	}
 	
 	@GetMapping("/{postagemId}")
-	public Postagem buscar(@PathVariable Long postagemId) {
-		return postagemService.buscarOuFalhar(postagemId);
+	public PostagemDTO buscar(@PathVariable Long postagemId) {
+		Postagem postagem = postagemService.buscarOuFalhar(postagemId);
+		
+		return postagemDTOAssembler.toDTO(postagem);
 	}
 	
 	@PostMapping()

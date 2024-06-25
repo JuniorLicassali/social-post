@@ -12,8 +12,11 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
+import javax.persistence.OneToMany;
 
 import org.hibernate.annotations.CreationTimestamp;
+
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -46,9 +49,8 @@ public class Usuario {
 					inverseJoinColumns = @JoinColumn(name = "grupo_id"))
 	private List<Grupo> grupos = new ArrayList<>();
 	
-	@ManyToMany
-	@JoinTable(name = "usuario_post", joinColumns = @JoinColumn(name = "usuario_id"),
-					inverseJoinColumns = @JoinColumn(name = "postagem_id"))
+	
+	@OneToMany(mappedBy = "autor")
 	private List<Postagem> posts = new ArrayList<>();
 	
 }
