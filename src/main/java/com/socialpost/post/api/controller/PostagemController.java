@@ -2,6 +2,8 @@ package com.socialpost.post.api.controller;
 
 import java.util.List;
 
+import javax.validation.Valid;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -15,9 +17,11 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.socialpost.post.api.assembler.PostagemDTOAssembler;
+import com.socialpost.post.api.assembler.PostagemInputDisassembler;
 import com.socialpost.post.api.assembler.PostagemResumoDTOAssembler;
 import com.socialpost.post.api.dto.PostagemDTO;
 import com.socialpost.post.api.dto.PostagemResumoDTO;
+import com.socialpost.post.api.dto.input.PostagemInput;
 import com.socialpost.post.domain.model.Postagem;
 import com.socialpost.post.domain.repository.PostagemRepository;
 import com.socialpost.post.domain.service.PostagemService;
@@ -38,6 +42,9 @@ public class PostagemController {
 	@Autowired
 	private PostagemResumoDTOAssembler postagemResumoDTOAssembler;
 	
+	@Autowired
+	private PostagemInputDisassembler postagemInputDisassembler;
+	
 	@GetMapping
 	public List<PostagemResumoDTO> listar() {
 		List<Postagem> postagens = postagemRepository.findAll();
@@ -53,13 +60,23 @@ public class PostagemController {
 	
 	@PostMapping()
 	@ResponseStatus(HttpStatus.CREATED)
-	public Postagem adicionar(@RequestBody Postagem postagem) {
-		return postagemService.salvar(postagem);
+	public PostagemDTO adicionar(@RequestBody @Valid PostagemInput postagemInput) {
+		Postagem postagem = postagemInputDisassembler.toDomainObject(postagemInput);
+		
+		postagem = postagemService.salvar(postagem, postagemInput.getAutor().getId());
+		
+		return postagemDTOAssembler.toDTO(postagem);
 	}
 	
 	@PutMapping("/{postagemId}")
-	public Postagem atualizar(@PathVariable Long postagemId) {
-		return null;
+	public PostagemDTO atualizar(@PathVariable Long postagemId, @RequestBody @Valid PostagemInput postagemInput) {
+		Postagem postagemAtual = postagemService.buscarOuFalhar(postagemId);
+		
+		postagemInputDisassembler.copyToDomainObject(postagemInput, postagemAtual);
+		
+		postagemAtual = postagemService.salvar(postagemAtual);
+		
+		return postagemDTOAssembler.toDTO(postagemAtual);
 	}
 	
 	@DeleteMapping("/{postagemId}")

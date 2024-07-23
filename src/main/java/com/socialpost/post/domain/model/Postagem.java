@@ -13,6 +13,7 @@ import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
+import javax.validation.constraints.NotNull;
 
 import org.hibernate.annotations.CreationTimestamp;
 
@@ -30,14 +31,16 @@ public class Postagem {
 	private Long id;
 	
 	@CreationTimestamp
-	@Column(nullable = false, columnDefinition = "datetime")
+//	@Column(nullable = false, columnDefinition = "datetime")
 	private OffsetDateTime dataPostagem;
 	
 	@Column(nullable = false)
 	private String descricao;
 	
+//	adicionar depois o nullable=false pq tirei que estava dando erro pois nao mandava o id do user e ao buscar dava erro
+	@NotNull
 	@ManyToOne
-	@JoinColumn(name = "autor_id", nullable = false)
+	@JoinColumn(name = "autor_id")
 	private Usuario autor;
 	
 	@ManyToMany

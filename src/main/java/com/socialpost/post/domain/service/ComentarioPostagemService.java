@@ -10,6 +10,7 @@ import com.socialpost.post.domain.exception.ComentarioNaoEncontradoException;
 import com.socialpost.post.domain.exception.PostagemNaoEncontradaException;
 import com.socialpost.post.domain.model.Comentario;
 import com.socialpost.post.domain.model.Postagem;
+import com.socialpost.post.domain.model.Usuario;
 import com.socialpost.post.domain.repository.ComentarioRepository;
 
 @Service
@@ -23,10 +24,15 @@ public class ComentarioPostagemService {
 	@Autowired
 	private PostagemService postagemService;
 	
+	@Autowired
+	private CadastroUsuarioService usuarioService;
+	
 	@Transactional
-	public Comentario salvar(Long postagemId, Comentario comentario) {
+	public Comentario salvar(Long postagemId, Comentario comentario, Long usuarioId) {
 		Postagem postagem = postagemService.buscarOuFalhar(postagemId);
-		if(postagem != null) {
+		Usuario usuario = usuarioService.buscarOuFalhar(usuarioId);
+		
+		if(postagem != null && usuario != null) {
 			comentario = comentarioRepository.save(comentario);
 			postagem.getComentarios().add(comentario);
 			postagemService.salvar(postagem);

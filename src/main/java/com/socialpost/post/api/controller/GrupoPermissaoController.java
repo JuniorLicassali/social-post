@@ -13,6 +13,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.socialpost.post.api.assembler.PermissaoDTOAssembler;
+import com.socialpost.post.api.dto.PermissaoDTO;
 import com.socialpost.post.domain.model.Grupo;
 import com.socialpost.post.domain.model.Permissao;
 import com.socialpost.post.domain.service.CadastroGrupoService;
@@ -24,12 +26,15 @@ public class GrupoPermissaoController {
 	@Autowired
 	private CadastroGrupoService cadastroGrupoService;
 	
+	@Autowired
+	private PermissaoDTOAssembler permissaoDTOAssembler;
+	
 	@GetMapping
-	public Collection<Permissao> listar(@PathVariable Long grupoId) {
+	public Collection<PermissaoDTO> listar(@PathVariable Long grupoId) {
 		Grupo grupo = cadastroGrupoService.buscarOuFalhar(grupoId);
 		Collection<Permissao> permissoes = grupo.getPermissoes();
 		
-		return permissoes;
+		return permissaoDTOAssembler.toCollectionDTO(permissoes);
 	}
 	
 	@PutMapping(path = "/{permissaoId}")

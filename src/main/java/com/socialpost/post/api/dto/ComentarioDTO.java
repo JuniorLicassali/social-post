@@ -12,7 +12,6 @@ public class ComentarioDTO {
 	  private Long id;
       private String texto;
       private OffsetDateTime dataComentario;
-      
       private UsuarioResumoDTO usuario;
 
 }
