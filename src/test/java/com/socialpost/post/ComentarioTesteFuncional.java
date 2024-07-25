@@ -19,7 +19,12 @@ import io.restassured.http.ContentType;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
-public class CadastroComentarioIT {
+public class ComentarioTesteFuncional {
+	
+	public static final Long ID_POSTAGEM_EXISTENTE = 1L;
+	
+	public static final Long ID_POSTAGEM_INEXISTENTE = 100L;
+	public static final Long ID_COMENTARIO_INEXISTENTE = 100L;
 
 	@LocalServerPort
 	public int port;
@@ -27,14 +32,16 @@ public class CadastroComentarioIT {
 	@Autowired
 	private Flyway flyway;
 	
-	private String jsonComentario;
+	private String jsonComentarioCorreto;
+	private String jsonComentarioIncorreto;
 	
 	@Before
 	public void setUp() {
 		RestAssured.port = port;
 		RestAssured.basePath = "/postagem";
 		
-		jsonComentario = ResourceUtils.getContentFromResource("/json/correto/comentario.json");
+		jsonComentarioCorreto = ResourceUtils.getContentFromResource("/json/correto/comentario.json");
+		jsonComentarioIncorreto = ResourceUtils.getContentFromResource("/json/incorreto/comentario.json");
 		
 		flyway.migrate();
 	}
@@ -56,7 +63,7 @@ public class CadastroComentarioIT {
 	public void deveRetornarStatus201_QuandoCriarUmComentatarioEmUmaPostagem() {
 		RestAssured.given()
 			.pathParam("postagemId", 1)
-			.body(jsonComentario)
+			.body(jsonComentarioCorreto)
 			.contentType(ContentType.JSON)
 			.accept(ContentType.JSON)
 		.when()
@@ -76,5 +83,43 @@ public class CadastroComentarioIT {
 		.statusCode(HttpStatus.NO_CONTENT.value());
 	}
 	
+	///////////////////////////////////////////////////////////////////////////////////
+	
+	@Test
+	public void deveRetornarStatus404_QuandoTentarCadastrarComentarioEmPostagemInexistente() {
+		RestAssured.given()
+			.pathParam("postagemId", ID_POSTAGEM_INEXISTENTE)
+			.body(jsonComentarioCorreto)
+			.contentType(ContentType.JSON)
+			.accept(ContentType.JSON)
+		.when()
+			.post("/{postagemId}/comentario")
+		.then()
+			.statusCode(HttpStatus.NOT_FOUND.value());
+	}
+	
+	@Test
+	public void deveRetornarStatus404_QuandoTentarExcluirComentarioInexistente() {
+		RestAssured.given()
+			.pathParam("postagemId", ID_POSTAGEM_EXISTENTE)
+			.pathParam("comentarioId", ID_COMENTARIO_INEXISTENTE)
+		.when()
+			.delete("/{postagemId}/comentario/{comentarioId}")
+		.then()
+			.statusCode(HttpStatus.NOT_FOUND.value());
+	}
+	
+	@Test
+	public void deveRetornarStatus400_QuandoTentarCadastrarComentarioComCorpoIncorreto() {
+		RestAssured.given()
+			.pathParam("postagemId", ID_POSTAGEM_EXISTENTE)
+			.body(jsonComentarioIncorreto)
+			.accept(ContentType.JSON)
+			.contentType(ContentType.JSON)
+		.when()
+			.post("/{postagemId}/comentario")
+		.then()
+			.statusCode(HttpStatus.BAD_REQUEST.value());
+	}
 	
 }

@@ -19,9 +19,11 @@ import org.springframework.web.bind.annotation.RestController;
 import com.socialpost.post.api.assembler.PostagemDTOAssembler;
 import com.socialpost.post.api.assembler.PostagemInputDisassembler;
 import com.socialpost.post.api.assembler.PostagemResumoDTOAssembler;
+import com.socialpost.post.api.assembler.PostagemUpdateInputDisassembler;
 import com.socialpost.post.api.dto.PostagemDTO;
 import com.socialpost.post.api.dto.PostagemResumoDTO;
 import com.socialpost.post.api.dto.input.PostagemInput;
+import com.socialpost.post.api.dto.input.PostagemUpdateInput;
 import com.socialpost.post.domain.model.Postagem;
 import com.socialpost.post.domain.repository.PostagemRepository;
 import com.socialpost.post.domain.service.PostagemService;
@@ -44,6 +46,9 @@ public class PostagemController {
 	
 	@Autowired
 	private PostagemInputDisassembler postagemInputDisassembler;
+	
+	@Autowired
+	private PostagemUpdateInputDisassembler postagemUpdateInputDisassembler;
 	
 	@GetMapping
 	public List<PostagemResumoDTO> listar() {
@@ -69,10 +74,10 @@ public class PostagemController {
 	}
 	
 	@PutMapping("/{postagemId}")
-	public PostagemDTO atualizar(@PathVariable Long postagemId, @RequestBody @Valid PostagemInput postagemInput) {
+	public PostagemDTO atualizar(@PathVariable Long postagemId, @RequestBody @Valid PostagemUpdateInput postagemInput) {
 		Postagem postagemAtual = postagemService.buscarOuFalhar(postagemId);
 		
-		postagemInputDisassembler.copyToDomainObject(postagemInput, postagemAtual);
+		postagemUpdateInputDisassembler.copyToDomainObject(postagemInput, postagemAtual);
 		
 		postagemAtual = postagemService.salvar(postagemAtual);
 		

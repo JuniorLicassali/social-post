@@ -11,9 +11,11 @@ import lombok.Setter;
 public class PostagemDTO {
 	
 	private Long id;
+	
+	private UsuarioResumoDTO autor;
+	
 	private OffsetDateTime dataPostagem;
 	private String descricao;
 	private List<ComentarioDTO> comentarios;
 	
-	private UsuarioResumoDTO autor;
 }

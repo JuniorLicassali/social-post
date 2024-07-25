@@ -20,9 +20,10 @@ import io.restassured.http.ContentType;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
-public class CadastroPostagemIT {
+public class PostagemTesteFuncional {
 	
-	public static final Long ID_COZINHA_INEXISTENTE = 100L;
+	public static final Long ID_POSTAGEM_INEXISTENTE = 100L;
+	public static final Long ID_POSTAGEM_EXISTENTE = 1L;
 	
 	@LocalServerPort
 	public int port;
@@ -30,14 +31,16 @@ public class CadastroPostagemIT {
 	@Autowired
 	private Flyway flyway;
 	
-	private String jsonPostagem;
+	private String jsonPostagemCorreta;
+	private String jsonPostagemIncorreta;
 	
 	@Before
 	public void setUp() {
 		RestAssured.port = port;
 		RestAssured.basePath = "/postagem";
 		
-		jsonPostagem = ResourceUtils.getContentFromResource("/json/correto/postagem.json");
+		jsonPostagemCorreta = ResourceUtils.getContentFromResource("/json/correto/postagem.json");
+		jsonPostagemIncorreta = ResourceUtils.getContentFromResource("/json/incorreto/postagem.json");
 		
 		flyway.migrate();
 	}
@@ -69,7 +72,7 @@ public class CadastroPostagemIT {
 	@Test
 	public void deveRetornarStatus201_QuandoCadastrarPostagem() {
 		RestAssured.given()
-			.body(jsonPostagem)
+			.body(jsonPostagemCorreta)
 			.contentType(ContentType.JSON)
 			.accept(ContentType.JSON)
 		.when()
@@ -91,13 +94,51 @@ public class CadastroPostagemIT {
 			.body("id", equalTo(1));
 	}
 	
+///////////////////////////////////////////////////////////////////////////////////
+	
 	@Test
 	public void deveRetornarStatus404_QuandoConsultarPostagemInexistente() {
 		RestAssured.given()
-			.pathParam("cozinhaId", ID_COZINHA_INEXISTENTE)
+			.pathParam("cozinhaId", ID_POSTAGEM_INEXISTENTE)
 			.accept(ContentType.JSON)
 		.when()
 			.get("/{cozinhaId}")
+		.then()
+			.statusCode(HttpStatus.NOT_FOUND.value());
+	}
+	
+	@Test
+	public void deveRetornarStatus400_QuandoCadastrarPostagemComCorpoIncorreto() {
+		RestAssured.given()
+			.body(jsonPostagemIncorreta)
+			.accept(ContentType.JSON)
+			.contentType(ContentType.JSON)
+		.when()
+			.post()
+		.then()
+			.statusCode(HttpStatus.BAD_REQUEST.value());
+	}
+	
+	@Test
+	public void deveRetornarStatus400_QuandoAlterarPostagemComCorpoIncorreto() {
+		RestAssured.given()
+			.pathParam("postagemId", ID_POSTAGEM_EXISTENTE)
+			.body(jsonPostagemIncorreta)
+			.accept(ContentType.JSON)
+			.contentType(ContentType.JSON)
+		.when()
+			.put("/{postagemId}")
+		.then()
+			.statusCode(HttpStatus.BAD_REQUEST.value());
+	}
+	
+	@Test
+	public void deveRetornarStatus404_QuandoTentarExcluirPostagemInexistente() {
+		RestAssured.given()
+			.pathParam("postagemId", ID_POSTAGEM_INEXISTENTE)
+			.accept(ContentType.JSON)
+		.when()
+			.delete("/{postagemId}")
 		.then()
 			.statusCode(HttpStatus.NOT_FOUND.value());
 	}

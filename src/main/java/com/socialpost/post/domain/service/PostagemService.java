@@ -1,6 +1,7 @@
 package com.socialpost.post.domain.service;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -36,8 +37,15 @@ public class PostagemService {
 		}
 	}
 	
+	@Transactional
 	public void excluir(Long postagemId) {
-		postagemRepository.deleteById(postagemId);
+		
+		try {
+			postagemRepository.deleteById(postagemId);
+		} catch (EmptyResultDataAccessException e) {
+			throw new PostagemNaoEncontradaException(postagemId);
+		}
+		
 	}
 	
 	public Postagem buscarOuFalhar(Long postagemId) {
