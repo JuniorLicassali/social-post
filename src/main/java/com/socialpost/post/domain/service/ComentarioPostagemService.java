@@ -3,6 +3,9 @@ package com.socialpost.post.domain.service;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -28,8 +31,8 @@ public class ComentarioPostagemService {
 	private CadastroUsuarioService usuarioService;
 	
 	@Transactional
-	public Comentario salvar(Long postagemId, Comentario comentario, Long usuarioId) {
-		Postagem postagem = postagemService.buscarOuFalhar(postagemId);
+	public Comentario salvar(String codigoPostagem, Comentario comentario, Long usuarioId) {
+		Postagem postagem = postagemService.buscarOuFalhar(codigoPostagem);
 		Usuario usuario = usuarioService.buscarOuFalhar(usuarioId);
 		
 		if(postagem != null && usuario != null) {
@@ -43,8 +46,8 @@ public class ComentarioPostagemService {
 	}
 
 	@Transactional
-	public void excluir(Long postagemId, Long comentarioId) {
-		Postagem postagem = postagemService.buscarOuFalhar(postagemId);
+	public void excluir(String codigoPostagem, Long comentarioId) {
+		Postagem postagem = postagemService.buscarOuFalhar(codigoPostagem);
         Comentario comentario = buscarOuFalhar(comentarioId);
         
         if (postagem.removerComentario(comentario)) {
@@ -55,9 +58,16 @@ public class ComentarioPostagemService {
         }
 	}
 	
-	public List<Comentario> buscarTodosOsComentario(Long postagemId) {
-		Postagem postagem = postagemService.buscarOuFalhar(postagemId);
-        return postagem.getComentarios();
+	public Page<Comentario> buscarTodosOsComentario(String codigoPostagem, Pageable pageable) {
+		Postagem postagem = postagemService.buscarOuFalhar(codigoPostagem);
+		List<Comentario> comentarios = postagem.getComentarios();
+		
+		int start = (int) pageable.getOffset();
+		int end = Math.min((start + pageable.getPageSize()), comentarios.size());
+		
+		List<Comentario> pagedComentarios = comentarios.subList(start, end);
+		
+        return new PageImpl<>(pagedComentarios, pageable, comentarios.size());
 	}
 	
 	public Comentario buscarOuFalhar(Long comentarioId) {

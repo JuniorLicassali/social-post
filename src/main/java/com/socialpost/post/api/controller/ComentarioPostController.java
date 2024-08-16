@@ -5,6 +5,9 @@ import java.util.List;
 import javax.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -23,7 +26,7 @@ import com.socialpost.post.domain.model.Comentario;
 import com.socialpost.post.domain.service.ComentarioPostagemService;
 
 @RestController
-@RequestMapping(path = "/postagem/{postagemId}/comentario")
+@RequestMapping(path = "/postagem/{codigoPostagem}/comentario")
 public class ComentarioPostController {
 	
 	@Autowired
@@ -36,28 +39,32 @@ public class ComentarioPostController {
 	private ComentarioInputDisassembler comentarioInputDisassembler;
 	
 	@GetMapping
-	public List<ComentarioDTO> listar(@PathVariable Long postagemId) {
-		List<Comentario> comentarios = comentarioPostagemService.buscarTodosOsComentario(postagemId);
+	public Page<ComentarioDTO> listar(@PathVariable String codigoPostagem, Pageable pageable) {
+		Page<Comentario> comentariosPage = comentarioPostagemService.buscarTodosOsComentario(codigoPostagem, pageable);
 		
-		return comentarioDTOAssembler.toColletionDTO(comentarios);
+		List<ComentarioDTO> comentariosDTO = comentarioDTOAssembler.toCollectionDTO(comentariosPage.getContent());
+		
+		Page<ComentarioDTO> comentariosDTOPage = new PageImpl<>(comentariosDTO, pageable, comentariosPage.getTotalElements());
+		
+		return comentariosDTOPage;
 	}
 	
 	@PostMapping
 	@ResponseStatus(HttpStatus.CREATED)
-	public ComentarioDTO adicionar(@PathVariable Long postagemId, @RequestBody @Valid ComentarioInput comentarioInput) {
+	public ComentarioDTO adicionar(@PathVariable String codigoPostagem, @RequestBody @Valid ComentarioInput comentarioInput) {
 		Comentario comentario = comentarioInputDisassembler.toDomainObject(comentarioInput);
 		
 		Long usuarioId = comentario.getUsuario().getId();
 		
-		comentario = comentarioPostagemService.salvar(postagemId, comentario, usuarioId);
+		comentario = comentarioPostagemService.salvar(codigoPostagem, comentario, usuarioId);
 		
 		return comentarioDTOAssembler.toDTO(comentario);
 	}
 	
 	@DeleteMapping("/{comentarioId}")
 	@ResponseStatus(HttpStatus.NO_CONTENT)
-	public void excluir(@PathVariable Long postagemId, @PathVariable Long comentarioId) {
-		comentarioPostagemService.excluir(postagemId, comentarioId);
+	public void excluir(@PathVariable String codigoPostagem, @PathVariable Long comentarioId) {
+		comentarioPostagemService.excluir(codigoPostagem, comentarioId);
 	}
 
 }

@@ -10,9 +10,9 @@ import lombok.Setter;
 @Setter
 public class PostagemDTO {
 	
-	private Long id;
+	private String codigo;
 	
-	private UsuarioResumoDTO autor;
+	private UsuarioAutorResumoDTO autor;
 	
 	private OffsetDateTime dataPostagem;
 	private String descricao;

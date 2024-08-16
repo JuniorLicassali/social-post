@@ -38,19 +38,19 @@ public class PostagemService {
 	}
 	
 	@Transactional
-	public void excluir(Long postagemId) {
+	public void excluir(String codigoPostagem) {
 		
 		try {
-			postagemRepository.deleteById(postagemId);
+			postagemRepository.deleteByCodigo(codigoPostagem);
 		} catch (EmptyResultDataAccessException e) {
-			throw new PostagemNaoEncontradaException(postagemId);
+			throw new PostagemNaoEncontradaException(codigoPostagem);
 		}
 		
 	}
 	
-	public Postagem buscarOuFalhar(Long postagemId) {
-		return postagemRepository.findById(postagemId)
-				.orElseThrow(() -> new PostagemNaoEncontradaException(postagemId));
+	public Postagem buscarOuFalhar(String codigoPostagem) {
+		return postagemRepository.findByCodigo(codigoPostagem)
+				.orElseThrow(() -> new PostagemNaoEncontradaException(codigoPostagem));
 	}
 
 }

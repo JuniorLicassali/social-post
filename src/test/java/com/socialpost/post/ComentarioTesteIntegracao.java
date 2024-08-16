@@ -31,7 +31,7 @@ public class ComentarioTesteIntegracao {
 	public static final Long ID_COMENTARIO_INEXISTENTE = 100L;
 	
 	public static final Long ID_COMENTARIO_EXISTENTE = 1L;
-	public static final Long ID_POSTAGEM_EXISTENTE = 1L;
+	public static final String ID_POSTAGEM_EXISTENTE = "10e49ddf-8f2f-487b-a9cf-1e79335685b0";
 	
 	@Autowired
 	private ComentarioPostagemService comentarioService;
@@ -62,7 +62,7 @@ public class ComentarioTesteIntegracao {
 		comentario.setUsuario(usuario);
 		comentario.setDataComentario(OffsetDateTime.now());;
 		
-		comentarioService.salvar(1L, comentario, usuario.getId());
+		comentarioService.salvar(ID_POSTAGEM_EXISTENTE, comentario, usuario.getId());
 		
 		assertThat(comentario).isNotNull();
 		assertThat(usuario.getId()).isNotNull();
@@ -107,7 +107,7 @@ public class ComentarioTesteIntegracao {
 		comentario.setUsuario(usuario);
 		comentario.setDataComentario(OffsetDateTime.now());
 		
-		comentarioService.salvar(1L, comentario, usuario.getId());
+		comentarioService.salvar(ID_POSTAGEM_EXISTENTE, comentario, usuario.getId());
 	}
 	
 	@Test(expected = ComentarioNaoEncontradoException.class)

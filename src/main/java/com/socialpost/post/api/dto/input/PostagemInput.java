@@ -6,7 +6,7 @@ import javax.validation.Valid;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 
-import com.socialpost.post.api.dto.UsuarioResumoDTO;
+import com.socialpost.post.api.dto.UsuarioAutorResumoDTO;
 import com.socialpost.post.domain.model.Comentario;
 
 import lombok.Getter;
@@ -21,7 +21,7 @@ public class PostagemInput {
 	
 	@Valid
 	@NotNull
-	private UsuarioResumoDTO autor;
+	private UsuarioAutorResumoDTO autor;
 	
 	private List<Comentario> comentarios;
 	

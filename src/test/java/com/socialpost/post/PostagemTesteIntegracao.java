@@ -22,9 +22,9 @@ import com.socialpost.post.domain.service.PostagemService;
 @RunWith(SpringRunner.class)
 @SpringBootTest()
 public class PostagemTesteIntegracao {
-	public static final Long ID_POSTAGEM_INEXISTENTE = 100L;
+	public static final String ID_POSTAGEM_INEXISTENTE = "10e49ddf-8f2f-487b-a9cf-1e79335685b1";
 	
-	public static final Long ID_POSTAGEM_EXISTENTE = 1L;
+	public static final String ID_POSTAGEM_EXISTENTE = "10e49ddf-8f2f-487b-a9cf-1e79335685b0";
 	
 	@Autowired
 	private PostagemService postagemService;
@@ -61,11 +61,11 @@ public class PostagemTesteIntegracao {
 	
 	@Test
  	public void testarExcluirPostagemComSucesso() {
-		assertThat(postagemRepository.existsById(ID_POSTAGEM_EXISTENTE)).isTrue();
+		assertThat(postagemRepository.existsByCodigo(ID_POSTAGEM_EXISTENTE)).isTrue();
 		
 		postagemService.excluir(ID_POSTAGEM_EXISTENTE);
 		
-		assertThat(postagemRepository.existsById(ID_POSTAGEM_EXISTENTE)).isFalse();
+		assertThat(postagemRepository.existsByCodigo(ID_POSTAGEM_EXISTENTE)).isFalse();
 	}
 	
 	@Test

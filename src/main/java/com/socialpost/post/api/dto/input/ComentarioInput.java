@@ -16,6 +16,6 @@ public class ComentarioInput {
 	
 	@Valid
 	@NotNull
-	private UsuarioInput usuario;
+	private UsuarioAutorInput usuario;
 	
 }

@@ -1,6 +1,5 @@
 package com.socialpost.post.api.dto.input;
 
-import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
 
 import lombok.Getter;
@@ -8,13 +7,12 @@ import lombok.Setter;
 
 @Getter
 @Setter
-public class UsuarioInput {
+public class SenhaInput {
+
+	@NotBlank
+	private String senhaAtual;
 	
 	@NotBlank
-	private String nome;
-	
-	@Email
-	@NotBlank
-	private String email;
+	private String novaSenha;
 	
 }

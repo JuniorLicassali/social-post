@@ -20,9 +20,9 @@ public class ComentarioDTOAssembler {
 		return modelMapper.map(comentario, ComentarioDTO.class);
 	}
 	
-	public List<ComentarioDTO> toColletionDTO(List<Comentario> comentarios) {
+	public List<ComentarioDTO> toCollectionDTO(List<Comentario> comentarios) {
 		return comentarios.stream()
-							.map(postagem -> toDTO(postagem))
+							.map(comentario -> toDTO(comentario))
 							.collect(Collectors.toList());
 	}
 
