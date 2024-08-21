@@ -2,6 +2,7 @@ package com.socialpost.post.domain.model;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.Id;
 import javax.persistence.MapsId;
 import javax.persistence.OneToOne;
@@ -19,7 +20,7 @@ public class FotoPostagem {
 	@Column(name = "postagem_id")
 	private Long id;
 	
-	@OneToOne
+	@OneToOne(fetch = FetchType.LAZY)
 	@MapsId
 	private Postagem postagem;
 	
@@ -27,9 +28,9 @@ public class FotoPostagem {
 	private String contentType;
 	private Long tamanho;
 	
-	public Long getPostagemId() {
+	public String getPostagemCodigo() {
 		if(getPostagem() != null) {
-			return getPostagem().getId();
+			return getPostagem().getCodigo();
 		}
 		
 		return null;

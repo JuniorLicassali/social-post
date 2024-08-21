@@ -7,6 +7,7 @@ delete from usuario;
 delete from postagem;
 delete from comentario;
 delete from postagem_comentario;
+delete from foto_postagem;
 
 set foreign_key_checks = 1;
 
