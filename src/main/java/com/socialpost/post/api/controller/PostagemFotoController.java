@@ -18,12 +18,14 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 import com.socialpost.post.api.assembler.FotoPostagemDTOAssembler;
 import com.socialpost.post.api.dto.FotoPostagemDTO;
 import com.socialpost.post.api.dto.input.FotoPostagemInput;
+import com.socialpost.post.api.openapi.controller.PostagemFotoControllerOpenApi;
 import com.socialpost.post.domain.exception.EntidadeNaoEncontradaException;
 import com.socialpost.post.domain.model.FotoPostagem;
 import com.socialpost.post.domain.model.Postagem;
@@ -34,7 +36,7 @@ import com.socialpost.post.domain.service.PostagemService;
 
 @RestController
 @RequestMapping(path = "/postagem/{codigoPostagem}/foto")
-public class PostagemFotoController {
+public class PostagemFotoController implements PostagemFotoControllerOpenApi {
 	
 	@Autowired
 	private PostagemService postagemService;
@@ -48,9 +50,10 @@ public class PostagemFotoController {
 	@Autowired
 	private FotoStorageService fotoStorage;
 
+	@Override
 	@PutMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
 	public FotoPostagemDTO atualizarFoto(@PathVariable String codigoPostagem, 
-			@Valid FotoPostagemInput fotoPostagemInput) throws IOException {
+			@Valid FotoPostagemInput fotoPostagemInput, @RequestPart(required = true) MultipartFile multipartFile) throws IOException {
 		
 		Postagem postagem = postagemService.buscarOuFalhar(codigoPostagem);
 		
@@ -68,6 +71,7 @@ public class PostagemFotoController {
 		return fotoPostagemDTOAssembler.toDTO(fotoSalva);
 	}
 	
+	@Override
 	@GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
 	public FotoPostagemDTO buscar(@PathVariable String codigoPostagem) {
 		FotoPostagem fotoPostagem = catalogoFotoPostagem.buscarOuFalhar(codigoPostagem);
@@ -75,7 +79,8 @@ public class PostagemFotoController {
 		return fotoPostagemDTOAssembler.toDTO(fotoPostagem);
 	}
 	
-	@GetMapping
+	@Override
+	@GetMapping(produces = MediaType.ALL_VALUE)
 	public ResponseEntity<?> servirFoto(@PathVariable String codigoPostagem,
 			@RequestHeader(name = "accept") String acceptHeader) throws HttpMediaTypeNotAcceptableException {
 		try {
@@ -116,6 +121,7 @@ public class PostagemFotoController {
 		
 	}
 	
+	@Override
 	@DeleteMapping
 	@ResponseStatus(code = HttpStatus.NO_CONTENT)
 	public void excluir(@PathVariable String codigoPostagem) {

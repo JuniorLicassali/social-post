@@ -30,8 +30,7 @@ public class PostagemService {
 		Usuario usuario = cadastroUsuarioService.buscarOuFalhar(usuarioId);
 		
 		if(usuario != null) {
-			postagemRepository.save(postagem);
-			return postagem;
+			return postagemRepository.save(postagem);
 		} else {
 			throw new UsuarioNaoEncontradoException(usuarioId);
 		}

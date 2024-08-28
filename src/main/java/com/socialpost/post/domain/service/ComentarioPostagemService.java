@@ -38,7 +38,10 @@ public class ComentarioPostagemService {
 		if(postagem != null && usuario != null) {
 			comentario = comentarioRepository.save(comentario);
 			postagem.getComentarios().add(comentario);
+			comentarioRepository.flush();
 			postagemService.salvar(postagem);
+	
+			
 			return comentario;
 		} else {
 			throw new PostagemNaoEncontradaException("Postagem não encontrada");

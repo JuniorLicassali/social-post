@@ -9,6 +9,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -28,6 +29,7 @@ import com.socialpost.post.api.dto.PostagemDTO;
 import com.socialpost.post.api.dto.PostagemResumoDTO;
 import com.socialpost.post.api.dto.input.PostagemInput;
 import com.socialpost.post.api.dto.input.PostagemUpdateInput;
+import com.socialpost.post.api.openapi.controller.PostagemControllerOpenApi;
 import com.socialpost.post.core.data.PageableTranslator;
 import com.socialpost.post.domain.model.Postagem;
 import com.socialpost.post.domain.repository.PostagemRepository;
@@ -36,8 +38,8 @@ import com.socialpost.post.domain.service.PostagemService;
 import com.socialpost.post.infrastructure.repository.spec.PostagemSpecs;
 
 @RestController
-@RequestMapping(path = "/postagem")
-public class PostagemController {
+@RequestMapping(path = "/postagem", produces = MediaType.APPLICATION_JSON_VALUE)
+public class PostagemController implements PostagemControllerOpenApi {
 	
 	@Autowired
 	private PostagemRepository postagemRepository;
@@ -57,6 +59,7 @@ public class PostagemController {
 	@Autowired
 	private PostagemUpdateInputDisassembler postagemUpdateInputDisassembler;
 	
+	@Override
 	@GetMapping
 	public Page<PostagemResumoDTO> pesquisar(PostagemFilter filtro, Pageable pageable) {
 		pageable = traduzirPageable(pageable);
@@ -70,6 +73,7 @@ public class PostagemController {
 		return postagensDTOPage;
 	}
 	
+	@Override
 	@GetMapping("/{codigoPostagem}")
 	public PostagemDTO buscar(@PathVariable String codigoPostagem) {
 		Postagem postagem = postagemService.buscarOuFalhar(codigoPostagem);
@@ -77,6 +81,7 @@ public class PostagemController {
 		return postagemDTOAssembler.toDTO(postagem);
 	}
 	
+	@Override
 	@PostMapping()
 	@ResponseStatus(HttpStatus.CREATED)
 	public PostagemDTO adicionar(@RequestBody @Valid PostagemInput postagemInput) {
@@ -87,6 +92,7 @@ public class PostagemController {
 		return postagemDTOAssembler.toDTO(postagem);
 	}
 	
+	@Override
 	@PutMapping("/{codigoPostagem}")
 	public PostagemDTO atualizar(@PathVariable String codigoPostagem, @RequestBody @Valid PostagemUpdateInput postagemInput) {
 		Postagem postagemAtual = postagemService.buscarOuFalhar(codigoPostagem);
@@ -98,6 +104,7 @@ public class PostagemController {
 		return postagemDTOAssembler.toDTO(postagemAtual);
 	}
 	
+	@Override
 	@DeleteMapping("/{codigoPostagem}")
 	@ResponseStatus(HttpStatus.NO_CONTENT)
 	public void excluir(@PathVariable String codigoPostagem) {

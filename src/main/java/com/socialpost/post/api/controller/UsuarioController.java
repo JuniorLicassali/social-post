@@ -6,6 +6,7 @@ import javax.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -21,13 +22,14 @@ import com.socialpost.post.api.dto.UsuarioDTO;
 import com.socialpost.post.api.dto.input.SenhaInput;
 import com.socialpost.post.api.dto.input.UsuarioComSenhaInput;
 import com.socialpost.post.api.dto.input.UsuarioInput;
+import com.socialpost.post.api.openapi.controller.UsuarioControllerOpenApi;
 import com.socialpost.post.domain.model.Usuario;
 import com.socialpost.post.domain.repository.UsuarioRepository;
 import com.socialpost.post.domain.service.CadastroUsuarioService;
 
 @RestController
-@RequestMapping(path = "/usuarios")
-public class UsuarioController {
+@RequestMapping(path = "/usuarios", produces = MediaType.APPLICATION_JSON_VALUE)
+public class UsuarioController implements UsuarioControllerOpenApi {
 
 	@Autowired
 	private UsuarioRepository usuarioRepository;
@@ -41,11 +43,13 @@ public class UsuarioController {
 	@Autowired
 	private UsuarioInputDisassembler usuarioInputDisassembler;
 	
+	@Override
 	@GetMapping
 	public List<UsuarioDTO> listar() {
 		return usuarioDTOAssembler.toCollectionDTO(usuarioRepository.findAll());
 	}
 	
+	@Override
 	@GetMapping("/{usuarioId}")
 	public UsuarioDTO buscar(@PathVariable Long usuarioId) {
 		Usuario usuario = usuarioService.buscarOuFalhar(usuarioId);
@@ -53,8 +57,9 @@ public class UsuarioController {
 		return usuarioDTOAssembler.toDTO(usuario);
 	}
 	
-	@ResponseStatus(HttpStatus.CREATED)
+	@Override
 	@PostMapping
+	@ResponseStatus(HttpStatus.CREATED)
 	public UsuarioDTO salvar(@RequestBody @Valid UsuarioComSenhaInput usuarioComSenha) {
 		Usuario usuario = usuarioInputDisassembler.toDomainObject(usuarioComSenha);
 		usuario = usuarioService.salvar(usuario);
@@ -62,7 +67,7 @@ public class UsuarioController {
 		return usuarioDTOAssembler.toDTO(usuario);
 	}
 	
-	@ResponseStatus
+	@Override
 	@PutMapping("/{usuarioId}")
 	public UsuarioDTO atualizar(@PathVariable Long usuarioId, @RequestBody @Valid UsuarioInput usuarioInput) {
 		Usuario usuarioAtual = usuarioService.buscarOuFalhar(usuarioId);
@@ -73,6 +78,7 @@ public class UsuarioController {
 		return usuarioDTOAssembler.toDTO(usuarioAtual);
 	}
 	
+	@Override
 	@PutMapping("/{usuarioId}/senha")
 	public void alterarSenha(@PathVariable Long usuarioId, @RequestBody @Valid SenhaInput senhaInput) {
 		usuarioService.alterarSenha(usuarioId, senhaInput.getSenhaAtual(), senhaInput.getNovaSenha());

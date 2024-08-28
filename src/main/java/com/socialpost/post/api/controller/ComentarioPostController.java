@@ -9,6 +9,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -22,12 +23,13 @@ import com.socialpost.post.api.assembler.ComentarioDTOAssembler;
 import com.socialpost.post.api.assembler.ComentarioInputDisassembler;
 import com.socialpost.post.api.dto.ComentarioDTO;
 import com.socialpost.post.api.dto.input.ComentarioInput;
+import com.socialpost.post.api.openapi.controller.ComentarioPostControllerOpenApi;
 import com.socialpost.post.domain.model.Comentario;
 import com.socialpost.post.domain.service.ComentarioPostagemService;
 
 @RestController
-@RequestMapping(path = "/postagem/{codigoPostagem}/comentario")
-public class ComentarioPostController {
+@RequestMapping(path = "/postagem/{codigoPostagem}/comentario", produces = MediaType.APPLICATION_JSON_VALUE)
+public class ComentarioPostController implements ComentarioPostControllerOpenApi {
 	
 	@Autowired
 	private ComentarioPostagemService comentarioPostagemService;
@@ -38,6 +40,7 @@ public class ComentarioPostController {
 	@Autowired
 	private ComentarioInputDisassembler comentarioInputDisassembler;
 	
+	@Override
 	@GetMapping
 	public Page<ComentarioDTO> listar(@PathVariable String codigoPostagem, Pageable pageable) {
 		Page<Comentario> comentariosPage = comentarioPostagemService.buscarTodosOsComentario(codigoPostagem, pageable);
@@ -49,6 +52,7 @@ public class ComentarioPostController {
 		return comentariosDTOPage;
 	}
 	
+	@Override
 	@PostMapping
 	@ResponseStatus(HttpStatus.CREATED)
 	public ComentarioDTO adicionar(@PathVariable String codigoPostagem, @RequestBody @Valid ComentarioInput comentarioInput) {
@@ -61,9 +65,10 @@ public class ComentarioPostController {
 		return comentarioDTOAssembler.toDTO(comentario);
 	}
 	
+	@Override
 	@DeleteMapping("/{comentarioId}")
 	@ResponseStatus(HttpStatus.NO_CONTENT)
-	public void excluir(@PathVariable String codigoPostagem, @PathVariable Long comentarioId) {
+	public void excluir(@PathVariable String codigoPostagem,@PathVariable Long comentarioId) {
 		comentarioPostagemService.excluir(codigoPostagem, comentarioId);
 	}
 

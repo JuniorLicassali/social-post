@@ -1,14 +1,12 @@
 package com.socialpost.post.api.dto.input;
 
-import java.util.List;
-
 import javax.validation.Valid;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 
 import com.socialpost.post.api.dto.UsuarioAutorResumoDTO;
-import com.socialpost.post.domain.model.Comentario;
 
+import io.swagger.annotations.ApiModelProperty;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -16,6 +14,7 @@ import lombok.Setter;
 @Setter
 public class PostagemInput {
 
+	@ApiModelProperty(example = "Color sit amet, consectetur adipiscing elit. Curabitur condimentum consectetur finibus. Praesent id vehicula eros.")
 	@NotBlank
 	private String descricao;
 	
@@ -23,6 +22,6 @@ public class PostagemInput {
 	@NotNull
 	private UsuarioAutorResumoDTO autor;
 	
-	private List<Comentario> comentarios;
+//	private List<Comentario> comentarios;
 	
 }
