@@ -1,6 +1,6 @@
 package com.socialpost.post.api.openapi.controller;
 
-import java.util.List;
+import org.springframework.hateoas.CollectionModel;
 
 import com.socialpost.post.api.dto.UsuarioDTO;
 import com.socialpost.post.api.dto.input.SenhaInput;
@@ -18,7 +18,7 @@ import io.swagger.annotations.ApiResponses;
 public interface UsuarioControllerOpenApi {
 
 	@ApiOperation("Lista os usuários")
-	public List<UsuarioDTO> listar();
+	public CollectionModel<UsuarioDTO> listar();
 	
 	@ApiOperation("Busca um usuario por ID")
 	public UsuarioDTO buscar(@ApiParam(value = "ID de um usuário", example = "1") Long usuarioId);

@@ -2,6 +2,8 @@ package com.socialpost.post.api.openapi.controller;
 
 import java.io.IOException;
 
+import javax.validation.Valid;
+
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.HttpMediaTypeNotAcceptableException;
 import org.springframework.web.multipart.MultipartFile;
@@ -44,5 +46,7 @@ public interface PostagemFotoControllerOpenApi {
 		@ApiResponse(code = 404, message = "Foto da postagem não encontrada", response = Problem.class)
 	})
 	public void excluir(@ApiParam(value = "Código da postagem", example = "10e49ddf-8f2f-487b-a9cf-1e79335685b0") String codigoPostagem);
+
+	FotoPostagemDTO atualizarFoto(String codigoPostagem, @Valid FotoPostagemInput fotoPostagemInput) throws IOException;
 	
 }

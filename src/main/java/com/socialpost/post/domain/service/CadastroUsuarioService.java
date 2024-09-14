@@ -10,6 +10,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.socialpost.post.domain.exception.NegocioException;
 import com.socialpost.post.domain.exception.UsuarioNaoEncontradoException;
+import com.socialpost.post.domain.model.Grupo;
 import com.socialpost.post.domain.model.Usuario;
 import com.socialpost.post.domain.repository.UsuarioRepository;
 
@@ -18,6 +19,9 @@ public class CadastroUsuarioService {
 
 	@Autowired
 	private UsuarioRepository usuarioRepository;
+	
+	@Autowired 
+	private CadastroGrupoService grupoService;
 	
 	@Autowired
 	private EntityManager entityManager;
@@ -47,6 +51,22 @@ public class CadastroUsuarioService {
 		}
 		
 		usuario.setSenha(novaSenha);
+	}
+	
+	@Transactional
+	public void associarGrupo(Long usuarioId, Long grupoId) {
+		Usuario usuario = buscarOuFalhar(usuarioId);
+		Grupo grupo = grupoService.buscarOuFalhar(grupoId);
+		
+		usuario.adicionarGrupo(grupo);
+	}
+	
+	@Transactional
+	public void desassociarGrupo(Long usuarioId, Long grupoId) {
+		Usuario usuario = buscarOuFalhar(usuarioId);
+		Grupo grupo = grupoService.buscarOuFalhar(grupoId);
+		
+		usuario.removerGrupo(grupo);
 	}
 	
 	public Usuario buscarOuFalhar(Long usuarioId) {

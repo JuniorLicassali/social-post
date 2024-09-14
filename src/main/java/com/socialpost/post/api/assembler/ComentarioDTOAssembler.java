@@ -16,14 +16,15 @@ public class ComentarioDTOAssembler {
 	@Autowired
 	private ModelMapper modelMapper;
 	
-	public ComentarioDTO toDTO(Comentario comentario) {
+	public ComentarioDTO toModel(Comentario comentario) {
 		return modelMapper.map(comentario, ComentarioDTO.class);
 	}
 	
 	public List<ComentarioDTO> toCollectionDTO(List<Comentario> comentarios) {
 		return comentarios.stream()
-							.map(comentario -> toDTO(comentario))
+							.map(comentario -> toModel(comentario))
 							.collect(Collectors.toList());
 	}
+
 
 }

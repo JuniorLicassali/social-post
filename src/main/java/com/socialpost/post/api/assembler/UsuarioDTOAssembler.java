@@ -1,29 +1,45 @@
 package com.socialpost.post.api.assembler;
 
-import java.util.List;
-import java.util.stream.Collectors;
-
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.hateoas.CollectionModel;
+import org.springframework.hateoas.server.mvc.RepresentationModelAssemblerSupport;
+import org.springframework.hateoas.server.mvc.WebMvcLinkBuilder;
 import org.springframework.stereotype.Component;
 
+import com.socialpost.post.api.PostLinks;
+import com.socialpost.post.api.controller.UsuarioController;
 import com.socialpost.post.api.dto.UsuarioDTO;
 import com.socialpost.post.domain.model.Usuario;
 
 @Component
-public class UsuarioDTOAssembler {
+public class UsuarioDTOAssembler extends RepresentationModelAssemblerSupport<Usuario, UsuarioDTO> {
 	
 	@Autowired
 	private ModelMapper modelMapper;
 	
-	public UsuarioDTO toDTO(Usuario usuario) {
-		return modelMapper.map(usuario, UsuarioDTO.class);
+	@Autowired
+	private PostLinks postLinks;
+
+	public UsuarioDTOAssembler() {
+		super(UsuarioController.class, UsuarioDTO.class);
 	}
 	
-	public List<UsuarioDTO> toCollectionDTO(List<Usuario> usuarios) {
-		return usuarios.stream()
-						.map(usuario -> toDTO(usuario))
-						.collect(Collectors.toList());
+	@Override
+	public UsuarioDTO toModel(Usuario usuario) {
+		UsuarioDTO usuarioDTO = createModelWithId(usuario.getId(), usuario);
+		
+		modelMapper.map(usuario, usuarioDTO);
+	
+		usuarioDTO.add(postLinks.linkToGruposUsuario(usuario.getId()));
+		
+		return usuarioDTO;
+	}
+	
+	@Override
+	public CollectionModel<UsuarioDTO> toCollectionModel(Iterable<? extends Usuario> entities) {
+		return super.toCollectionModel(entities)
+				.add(WebMvcLinkBuilder.linkTo(UsuarioController.class).withSelfRel());
 	}
 
 }

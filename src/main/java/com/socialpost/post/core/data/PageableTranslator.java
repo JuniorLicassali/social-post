@@ -19,6 +19,4 @@ public class PageableTranslator {
 		return PageRequest.of(pageable.getPageNumber(), pageable.getPageSize(), Sort.by(orders));
 	}
 
-	
-//	18.12   09:59
 }

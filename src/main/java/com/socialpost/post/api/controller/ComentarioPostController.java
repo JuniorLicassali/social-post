@@ -19,6 +19,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.socialpost.post.api.PostLinks;
 import com.socialpost.post.api.assembler.ComentarioDTOAssembler;
 import com.socialpost.post.api.assembler.ComentarioInputDisassembler;
 import com.socialpost.post.api.dto.ComentarioDTO;
@@ -40,6 +41,9 @@ public class ComentarioPostController implements ComentarioPostControllerOpenApi
 	@Autowired
 	private ComentarioInputDisassembler comentarioInputDisassembler;
 	
+	@Autowired
+	private PostLinks postLinks;
+	
 	@Override
 	@GetMapping
 	public Page<ComentarioDTO> listar(@PathVariable String codigoPostagem, Pageable pageable) {
@@ -48,6 +52,15 @@ public class ComentarioPostController implements ComentarioPostControllerOpenApi
 		List<ComentarioDTO> comentariosDTO = comentarioDTOAssembler.toCollectionDTO(comentariosPage.getContent());
 		
 		Page<ComentarioDTO> comentariosDTOPage = new PageImpl<>(comentariosDTO, pageable, comentariosPage.getTotalElements());
+		
+		comentariosDTO.forEach(comentarioDTO -> {
+			comentarioDTO.add(postLinks.linkToComentarios(codigoPostagem, pageable, codigoPostagem));
+			
+//            comentarioDTO.add(WebMvcLinkBuilder.linkTo(
+//                WebMvcLinkBuilder.methodOn(ComentarioPostController.class)
+//                .listar(codigoPostagem, pageable))
+//                .withSelfRel());
+        });
 		
 		return comentariosDTOPage;
 	}
@@ -62,7 +75,7 @@ public class ComentarioPostController implements ComentarioPostControllerOpenApi
 		
 		comentario = comentarioPostagemService.salvar(codigoPostagem, comentario, usuarioId);
 		
-		return comentarioDTOAssembler.toDTO(comentario);
+		return comentarioDTOAssembler.toModel(comentario);
 	}
 	
 	@Override

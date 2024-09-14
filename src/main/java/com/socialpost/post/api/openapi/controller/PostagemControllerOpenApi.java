@@ -1,7 +1,7 @@
 package com.socialpost.post.api.openapi.controller;
 
-import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.hateoas.PagedModel;
 
 import com.socialpost.post.api.dto.PostagemDTO;
 import com.socialpost.post.api.dto.PostagemResumoDTO;
@@ -26,7 +26,7 @@ public interface PostagemControllerOpenApi {
 		@ApiImplicitParam(value = "Nomes das propriedades para filtrar na resposta, separados por vírgula",
 				name = "campos", paramType = "query", type = "string")
 	})
-	public Page<PostagemResumoDTO> pesquisar(PostagemFilter filtro, Pageable pageable);
+	public PagedModel<PostagemResumoDTO> pesquisar(PostagemFilter filtro, Pageable pageable);
 	
 	
 	@ApiOperation("Busca uma postagem por código")

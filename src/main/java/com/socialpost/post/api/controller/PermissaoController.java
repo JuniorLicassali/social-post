@@ -3,6 +3,7 @@ package com.socialpost.post.api.controller;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.hateoas.CollectionModel;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -25,10 +26,10 @@ public class PermissaoController implements PermissaoControllerOpenApi {
 	private PermissaoDTOAssembler permissaoDTOAssembler;
 	
 	@GetMapping
-	public List<PermissaoDTO> listar() {
+	public CollectionModel<PermissaoDTO> listar() {
 		List<Permissao> permissoes = permissaoRepository.findAll();
 		
-		return permissaoDTOAssembler.toCollectionDTO(permissoes);
+		return permissaoDTOAssembler.toCollectionModel(permissoes);
 	}
 	
 }

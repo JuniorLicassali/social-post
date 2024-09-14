@@ -3,6 +3,7 @@ package com.socialpost.post.api.controller;
 import java.util.Collection;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.hateoas.CollectionModel;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -32,11 +33,12 @@ public class GrupoPermissaoController implements GrupoPermissaoControllerOpenApi
 	
 	@Override
 	@GetMapping
-	public Collection<PermissaoDTO> listar(@PathVariable Long grupoId) {
+	public CollectionModel<PermissaoDTO> listar(@PathVariable Long grupoId) {
 		Grupo grupo = cadastroGrupoService.buscarOuFalhar(grupoId);
 		Collection<Permissao> permissoes = grupo.getPermissoes();
 		
-		return permissaoDTOAssembler.toCollectionDTO(permissoes);
+//		return permissaoDTOAssembler.to(permissoes);
+		return permissaoDTOAssembler.toCollectionModel(permissoes);
 	}
 	
 	

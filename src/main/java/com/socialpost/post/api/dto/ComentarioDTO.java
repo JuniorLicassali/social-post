@@ -2,13 +2,17 @@ package com.socialpost.post.api.dto;
 
 import java.time.OffsetDateTime;
 
+import org.springframework.hateoas.RepresentationModel;
+import org.springframework.hateoas.server.core.Relation;
+
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Getter;
 import lombok.Setter;
 
+@Relation(collectionRelation = "comentarios")
 @Getter
 @Setter
-public class ComentarioDTO {
+public class ComentarioDTO extends RepresentationModel<ComentarioDTO> {
 	
 	@ApiModelProperty(value = "ID do comentário", example = "1")
 	private Long id;

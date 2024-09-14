@@ -1,4 +1,4 @@
-package com.socialpost.post.core.openapi;
+package com.socialpost.post.core.springfox;
 
 import java.io.File;
 import java.io.InputStream;
@@ -14,6 +14,9 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Import;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.hateoas.CollectionModel;
+import org.springframework.hateoas.Links;
+import org.springframework.hateoas.PagedModel;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry;
@@ -21,11 +24,19 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
 import com.fasterxml.classmate.TypeResolver;
 import com.socialpost.post.api.dto.ComentarioDTO;
+import com.socialpost.post.api.dto.GrupoDTO;
+import com.socialpost.post.api.dto.PermissaoDTO;
 import com.socialpost.post.api.dto.PostagemResumoDTO;
+import com.socialpost.post.api.dto.UsuarioDTO;
 import com.socialpost.post.api.exceptionhandler.Problem;
 import com.socialpost.post.api.openapi.model.ComentariosDTOOpenApi;
+import com.socialpost.post.api.openapi.model.GruposDTOOpenApi;
+import com.socialpost.post.api.openapi.model.LinksModelOpenApi;
 import com.socialpost.post.api.openapi.model.PageableModelOpenApi;
+import com.socialpost.post.api.openapi.model.PermissoesDTOOpenApi;
 import com.socialpost.post.api.openapi.model.PostagensDTOOpenApi;
+import com.socialpost.post.api.openapi.model.UsuariosDTOOpenApi;
+import com.socialpost.post.api.openapi.model.UsuariosGrupoDTOOpenApi;
 
 import springfox.bean.validators.configuration.BeanValidatorPluginsConfiguration;
 import springfox.documentation.builders.ApiInfoBuilder;
@@ -63,10 +74,25 @@ public class SpringFoxConfig implements WebMvcConfigurer {
 				.ignoredParameterTypes(URL.class, URI.class, URLStreamHandler.class, 
 						Resource.class, File.class, InputStream.class)
 				.directModelSubstitute(Pageable.class, PageableModelOpenApi.class)
+				.directModelSubstitute(Links.class, LinksModelOpenApi.class)
+				
 				.alternateTypeRules(AlternateTypeRules.newRule(typeResolver.resolve(
 						Page.class, ComentarioDTO.class), ComentariosDTOOpenApi.class))
+				
 				.alternateTypeRules(AlternateTypeRules.newRule(typeResolver.resolve(
-						Page.class, PostagemResumoDTO.class), PostagensDTOOpenApi.class))
+						PagedModel.class, PostagemResumoDTO.class), PostagensDTOOpenApi.class))
+				
+				.alternateTypeRules(AlternateTypeRules.newRule(typeResolver.resolve(
+						CollectionModel.class, GrupoDTO.class), GruposDTOOpenApi.class))
+				
+				.alternateTypeRules(AlternateTypeRules.newRule(typeResolver.resolve(
+						CollectionModel.class, PermissaoDTO.class), PermissoesDTOOpenApi.class))
+				
+				.alternateTypeRules(AlternateTypeRules.newRule(typeResolver.resolve(
+						CollectionModel.class, UsuarioDTO.class), UsuariosDTOOpenApi.class))
+				
+				.alternateTypeRules(AlternateTypeRules.newRule(typeResolver.resolve(
+						CollectionModel.class, GrupoDTO.class), UsuariosGrupoDTOOpenApi.class))
 				.apiInfo(apiInfo())
 					.tags(new Tag("Comentários", "Gerencia os comentários"))
 					.tags(new Tag("Postagens", "Gerencia as postagens"))

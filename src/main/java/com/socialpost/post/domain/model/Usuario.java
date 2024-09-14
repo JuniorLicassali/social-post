@@ -2,7 +2,9 @@ package com.socialpost.post.domain.model;
 
 import java.time.OffsetDateTime;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -45,7 +47,7 @@ public class Usuario {
 	@ManyToMany
 	@JoinTable(name = "usuario_grupo", joinColumns = @JoinColumn(name = "usuario_id"),
 					inverseJoinColumns = @JoinColumn(name = "grupo_id"))
-	private List<Grupo> grupos = new ArrayList<>();
+	private Set<Grupo> grupos = new HashSet<>();
 	
 	
 	@OneToMany(mappedBy = "autor")
@@ -57,6 +59,14 @@ public class Usuario {
 	
 	public boolean senhaNaoCoincideCom(String senha) {
 		return !senhaCoincideCom(senha);
+	}
+	
+	public boolean adicionarGrupo(Grupo grupo) {
+		return getGrupos().add(grupo);
+	}
+	
+	public boolean removerGrupo(Grupo grupo) {
+		return getGrupos().remove(grupo);
 	}
 	
 }

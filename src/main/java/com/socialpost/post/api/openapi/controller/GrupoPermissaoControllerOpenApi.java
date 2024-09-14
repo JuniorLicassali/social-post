@@ -1,6 +1,6 @@
 package com.socialpost.post.api.openapi.controller;
 
-import java.util.Collection;
+import org.springframework.hateoas.CollectionModel;
 
 import com.socialpost.post.api.dto.PermissaoDTO;
 import com.socialpost.post.api.exceptionhandler.Problem;
@@ -15,7 +15,7 @@ import io.swagger.annotations.ApiResponses;
 public interface GrupoPermissaoControllerOpenApi {
 	
 	@ApiOperation("Lista Permissões")
-	public Collection<PermissaoDTO> listar(@ApiParam(value = "ID de um grupo", example = "1") Long grupoId);
+	public CollectionModel<PermissaoDTO> listar(@ApiParam(value = "ID de um grupo", example = "1") Long grupoId);
 	
 	
 	@ApiOperation("Associa grupo a uma permissão")

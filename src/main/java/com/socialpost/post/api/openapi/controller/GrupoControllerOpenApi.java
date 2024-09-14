@@ -1,6 +1,6 @@
 package com.socialpost.post.api.openapi.controller;
 
-import java.util.List;
+import org.springframework.hateoas.CollectionModel;
 
 import com.socialpost.post.api.dto.GrupoDTO;
 import com.socialpost.post.api.dto.input.GrupoInput;
@@ -16,7 +16,7 @@ import io.swagger.annotations.ApiResponses;
 public interface GrupoControllerOpenApi {
 
 	@ApiOperation("Lista os grupos")
-	public List<GrupoDTO> listar();
+	public CollectionModel<GrupoDTO> listar();
 	
 	
 	@ApiOperation("Busca um grupo por ID")

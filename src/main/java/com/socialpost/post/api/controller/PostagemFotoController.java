@@ -18,7 +18,6 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
@@ -53,7 +52,7 @@ public class PostagemFotoController implements PostagemFotoControllerOpenApi {
 	@Override
 	@PutMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
 	public FotoPostagemDTO atualizarFoto(@PathVariable String codigoPostagem, 
-			@Valid FotoPostagemInput fotoPostagemInput, @RequestPart(required = true) MultipartFile multipartFile) throws IOException {
+			@Valid FotoPostagemInput fotoPostagemInput) throws IOException  {
 		
 		Postagem postagem = postagemService.buscarOuFalhar(codigoPostagem);
 		
@@ -61,14 +60,13 @@ public class PostagemFotoController implements PostagemFotoControllerOpenApi {
 		
 		FotoPostagem foto = new FotoPostagem();
 		foto.setPostagem(postagem);
-//		foto.setDescricao(fotoPostagemInput.getDescricao());
 		foto.setContentType(arquivo.getContentType());
 		foto.setTamanho(arquivo.getSize());
 		foto.setNomeArquivo(arquivo.getOriginalFilename());
 		
 		FotoPostagem fotoSalva = catalogoFotoPostagem.salvar(foto, arquivo.getInputStream());
 		
-		return fotoPostagemDTOAssembler.toDTO(fotoSalva);
+		return fotoPostagemDTOAssembler.toModel(fotoSalva);
 	}
 	
 	@Override
@@ -76,7 +74,7 @@ public class PostagemFotoController implements PostagemFotoControllerOpenApi {
 	public FotoPostagemDTO buscar(@PathVariable String codigoPostagem) {
 		FotoPostagem fotoPostagem = catalogoFotoPostagem.buscarOuFalhar(codigoPostagem);
 
-		return fotoPostagemDTOAssembler.toDTO(fotoPostagem);
+		return fotoPostagemDTOAssembler.toModel(fotoPostagem);
 	}
 	
 	@Override
@@ -126,6 +124,13 @@ public class PostagemFotoController implements PostagemFotoControllerOpenApi {
 	@ResponseStatus(code = HttpStatus.NO_CONTENT)
 	public void excluir(@PathVariable String codigoPostagem) {
 		catalogoFotoPostagem.excluir(codigoPostagem);
+	}
+
+	@Override
+	public FotoPostagemDTO atualizarFoto(String codigoPostagem, FotoPostagemInput fotoPostagemInput,
+			MultipartFile multipartFile) throws IOException {
+		// TODO Auto-generated method stub
+		return null;
 	}
 	
 }

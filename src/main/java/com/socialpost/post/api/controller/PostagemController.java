@@ -1,13 +1,12 @@
 package com.socialpost.post.api.controller;
 
-import java.util.List;
-
 import javax.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PagedResourcesAssembler;
+import org.springframework.hateoas.PagedModel;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -21,6 +20,8 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.google.common.collect.ImmutableMap;
+import com.socialpost.post.api.PostLinks;
+import com.socialpost.post.api.ResourceUriHelper;
 import com.socialpost.post.api.assembler.PostagemDTOAssembler;
 import com.socialpost.post.api.assembler.PostagemInputDisassembler;
 import com.socialpost.post.api.assembler.PostagemResumoDTOAssembler;
@@ -59,18 +60,23 @@ public class PostagemController implements PostagemControllerOpenApi {
 	@Autowired
 	private PostagemUpdateInputDisassembler postagemUpdateInputDisassembler;
 	
+	@Autowired
+	private PagedResourcesAssembler<Postagem> pagedResourcesAssembler;
+	
+	@Autowired
+	private PostLinks postLinks;
+	
 	@Override
 	@GetMapping
-	public Page<PostagemResumoDTO> pesquisar(PostagemFilter filtro, Pageable pageable) {
+	public PagedModel<PostagemResumoDTO> pesquisar(PostagemFilter filtro, Pageable pageable) {
 		pageable = traduzirPageable(pageable);
 		
 		Page<Postagem> postagensPage = postagemRepository.findAll(PostagemSpecs.usandoFiltro(filtro), pageable);
 		
-		List<PostagemResumoDTO> postagensDTO = postagemResumoDTOAssembler.toColletionDTO(postagensPage.getContent());
+		PagedModel<PostagemResumoDTO> postagensPagedModel = pagedResourcesAssembler.toModel(postagensPage, postagemResumoDTOAssembler);
+		postagensPagedModel.add(postLinks.linkToPostagens());
 		
-		Page<PostagemResumoDTO> postagensDTOPage = new PageImpl<>(postagensDTO, pageable, postagensPage.getTotalElements());
-		
-		return postagensDTOPage;
+		return postagensPagedModel;
 	}
 	
 	@Override
@@ -78,7 +84,7 @@ public class PostagemController implements PostagemControllerOpenApi {
 	public PostagemDTO buscar(@PathVariable String codigoPostagem) {
 		Postagem postagem = postagemService.buscarOuFalhar(codigoPostagem);
 		
-		return postagemDTOAssembler.toDTO(postagem);
+		return postagemDTOAssembler.toModel(postagem);
 	}
 	
 	@Override
@@ -89,7 +95,11 @@ public class PostagemController implements PostagemControllerOpenApi {
 		
 		postagem = postagemService.salvar(postagem, postagemInput.getAutor().getId());
 		
-		return postagemDTOAssembler.toDTO(postagem);
+		PostagemDTO postagemDTO = postagemDTOAssembler.toModel(postagem);
+		
+		ResourceUriHelper.addUriInResponseHeader(postagemDTO.getCodigo());
+		
+		return postagemDTO;
 	}
 	
 	@Override
@@ -101,7 +111,7 @@ public class PostagemController implements PostagemControllerOpenApi {
 		
 		postagemAtual = postagemService.salvar(postagemAtual);
 		
-		return postagemDTOAssembler.toDTO(postagemAtual);
+		return postagemDTOAssembler.toModel(postagemAtual);
 	}
 	
 	@Override
