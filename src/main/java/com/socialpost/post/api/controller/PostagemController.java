@@ -32,9 +32,13 @@ import com.socialpost.post.api.dto.input.PostagemInput;
 import com.socialpost.post.api.dto.input.PostagemUpdateInput;
 import com.socialpost.post.api.openapi.controller.PostagemControllerOpenApi;
 import com.socialpost.post.core.data.PageableTranslator;
+import com.socialpost.post.core.security.CheckSecurity;
+import com.socialpost.post.core.security.SocialPostSecurity;
 import com.socialpost.post.domain.model.Postagem;
+import com.socialpost.post.domain.model.Usuario;
 import com.socialpost.post.domain.repository.PostagemRepository;
 import com.socialpost.post.domain.repository.filter.PostagemFilter;
+import com.socialpost.post.domain.service.CadastroUsuarioService;
 import com.socialpost.post.domain.service.PostagemService;
 import com.socialpost.post.infrastructure.repository.spec.PostagemSpecs;
 
@@ -66,6 +70,13 @@ public class PostagemController implements PostagemControllerOpenApi {
 	@Autowired
 	private PostLinks postLinks;
 	
+	@Autowired
+	private CadastroUsuarioService usuarioService;
+
+	@Autowired
+	private SocialPostSecurity socialPostSecurity;
+	
+	@CheckSecurity.Postagem.PodeConsultar
 	@Override
 	@GetMapping
 	public PagedModel<PostagemResumoDTO> pesquisar(PostagemFilter filtro, Pageable pageable) {
@@ -79,6 +90,7 @@ public class PostagemController implements PostagemControllerOpenApi {
 		return postagensPagedModel;
 	}
 	
+	@CheckSecurity.Postagem.PodeConsultar
 	@Override
 	@GetMapping("/{codigoPostagem}")
 	public PostagemDTO buscar(@PathVariable String codigoPostagem) {
@@ -87,21 +99,25 @@ public class PostagemController implements PostagemControllerOpenApi {
 		return postagemDTOAssembler.toModel(postagem);
 	}
 	
+	@CheckSecurity.Postagem.PodeEditar
 	@Override
-	@PostMapping()
+	@PostMapping
 	@ResponseStatus(HttpStatus.CREATED)
 	public PostagemDTO adicionar(@RequestBody @Valid PostagemInput postagemInput) {
-		Postagem postagem = postagemInputDisassembler.toDomainObject(postagemInput);
+		Postagem novaPostagem = postagemInputDisassembler.toDomainObject(postagemInput);
+		Usuario autor = usuarioService.buscarOuFalhar(socialPostSecurity.getUsuarioId());
 		
-		postagem = postagemService.salvar(postagem, postagemInput.getAutor().getId());
+		novaPostagem.setAutor(autor);
+		novaPostagem = postagemService.salvar(novaPostagem);
 		
-		PostagemDTO postagemDTO = postagemDTOAssembler.toModel(postagem);
+		PostagemDTO postagemDTO = postagemDTOAssembler.toModel(novaPostagem);
 		
 		ResourceUriHelper.addUriInResponseHeader(postagemDTO.getCodigo());
 		
 		return postagemDTO;
 	}
 	
+	@CheckSecurity.Postagem.PodeEditarPostagem
 	@Override
 	@PutMapping("/{codigoPostagem}")
 	public PostagemDTO atualizar(@PathVariable String codigoPostagem, @RequestBody @Valid PostagemUpdateInput postagemInput) {
@@ -114,6 +130,7 @@ public class PostagemController implements PostagemControllerOpenApi {
 		return postagemDTOAssembler.toModel(postagemAtual);
 	}
 	
+	@CheckSecurity.Postagem.PodeEditarPostagem
 	@Override
 	@DeleteMapping("/{codigoPostagem}")
 	@ResponseStatus(HttpStatus.NO_CONTENT)

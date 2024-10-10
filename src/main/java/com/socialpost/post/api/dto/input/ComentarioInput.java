@@ -1,8 +1,6 @@
 package com.socialpost.post.api.dto.input;
 
-import javax.validation.Valid;
 import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.NotNull;
 
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Getter;
@@ -16,8 +14,8 @@ public class ComentarioInput {
 	@NotBlank
 	private String texto;
 	
-	@Valid
-	@NotNull
-	private UsuarioAutorInput usuario;
+//	@Valid
+//	@NotNull
+//	private UsuarioAutorInput usuario;
 	
 }

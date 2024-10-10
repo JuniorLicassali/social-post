@@ -1,10 +1,6 @@
 package com.socialpost.post.api.dto.input;
 
-import javax.validation.Valid;
 import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.NotNull;
-
-import com.socialpost.post.api.dto.UsuarioAutorResumoDTO;
 
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Getter;
@@ -18,9 +14,9 @@ public class PostagemInput {
 	@NotBlank
 	private String descricao;
 	
-	@Valid
-	@NotNull
-	private UsuarioAutorResumoDTO autor;
+//	@Valid
+//	@NotNull
+//	private UsuarioAutorResumoDTO autor;
 	
 //	private List<Comentario> comentarios;
 	

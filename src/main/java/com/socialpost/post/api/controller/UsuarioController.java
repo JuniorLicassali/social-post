@@ -24,6 +24,7 @@ import com.socialpost.post.api.dto.input.SenhaInput;
 import com.socialpost.post.api.dto.input.UsuarioComSenhaInput;
 import com.socialpost.post.api.dto.input.UsuarioInput;
 import com.socialpost.post.api.openapi.controller.UsuarioControllerOpenApi;
+import com.socialpost.post.core.security.CheckSecurity;
 import com.socialpost.post.domain.model.Usuario;
 import com.socialpost.post.domain.repository.UsuarioRepository;
 import com.socialpost.post.domain.service.CadastroUsuarioService;
@@ -44,6 +45,7 @@ public class UsuarioController implements UsuarioControllerOpenApi {
 	@Autowired
 	private UsuarioInputDisassembler usuarioInputDisassembler;
 	
+	@CheckSecurity.UsuariosGruposPermissoes.PodeConsultar
 	@Override
 	@GetMapping
 	public CollectionModel<UsuarioDTO> listar() {
@@ -52,6 +54,7 @@ public class UsuarioController implements UsuarioControllerOpenApi {
 		return usuarioDTOAssembler.toCollectionModel(usuarios);
 	}
 	
+	@CheckSecurity.UsuariosGruposPermissoes.PodeConsultar
 	@Override
 	@GetMapping("/{usuarioId}")
 	public UsuarioDTO buscar(@PathVariable Long usuarioId) {
@@ -70,6 +73,7 @@ public class UsuarioController implements UsuarioControllerOpenApi {
 		return usuarioDTOAssembler.toModel(usuario);
 	}
 	
+	@CheckSecurity.UsuariosGruposPermissoes.PodeAlterarUsuario
 	@Override
 	@PutMapping("/{usuarioId}")
 	public UsuarioDTO atualizar(@PathVariable Long usuarioId, @RequestBody @Valid UsuarioInput usuarioInput) {
@@ -81,6 +85,7 @@ public class UsuarioController implements UsuarioControllerOpenApi {
 		return usuarioDTOAssembler.toModel(usuarioAtual);
 	}
 	
+	@CheckSecurity.UsuariosGruposPermissoes.PodeAlterarPropriaSenha
 	@Override
 	@PutMapping("/{usuarioId}/senha")
 	public void alterarSenha(@PathVariable Long usuarioId, @RequestBody @Valid SenhaInput senhaInput) {

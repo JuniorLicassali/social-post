@@ -25,6 +25,7 @@ import com.socialpost.post.api.assembler.FotoPostagemDTOAssembler;
 import com.socialpost.post.api.dto.FotoPostagemDTO;
 import com.socialpost.post.api.dto.input.FotoPostagemInput;
 import com.socialpost.post.api.openapi.controller.PostagemFotoControllerOpenApi;
+import com.socialpost.post.core.security.CheckSecurity;
 import com.socialpost.post.domain.exception.EntidadeNaoEncontradaException;
 import com.socialpost.post.domain.model.FotoPostagem;
 import com.socialpost.post.domain.model.Postagem;
@@ -49,6 +50,7 @@ public class PostagemFotoController implements PostagemFotoControllerOpenApi {
 	@Autowired
 	private FotoStorageService fotoStorage;
 
+	@CheckSecurity.Postagem.PodeEditar
 	@Override
 	@PutMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
 	public FotoPostagemDTO atualizarFoto(@PathVariable String codigoPostagem, 
@@ -69,6 +71,7 @@ public class PostagemFotoController implements PostagemFotoControllerOpenApi {
 		return fotoPostagemDTOAssembler.toModel(fotoSalva);
 	}
 	
+	@CheckSecurity.Postagem.PodeConsultar
 	@Override
 	@GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
 	public FotoPostagemDTO buscar(@PathVariable String codigoPostagem) {
@@ -77,6 +80,7 @@ public class PostagemFotoController implements PostagemFotoControllerOpenApi {
 		return fotoPostagemDTOAssembler.toModel(fotoPostagem);
 	}
 	
+	@CheckSecurity.Postagem.PodeConsultar
 	@Override
 	@GetMapping(produces = MediaType.ALL_VALUE)
 	public ResponseEntity<?> servirFoto(@PathVariable String codigoPostagem,
@@ -119,6 +123,7 @@ public class PostagemFotoController implements PostagemFotoControllerOpenApi {
 		
 	}
 	
+	@CheckSecurity.Postagem.PodeEditar
 	@Override
 	@DeleteMapping
 	@ResponseStatus(code = HttpStatus.NO_CONTENT)
@@ -126,6 +131,7 @@ public class PostagemFotoController implements PostagemFotoControllerOpenApi {
 		catalogoFotoPostagem.excluir(codigoPostagem);
 	}
 
+	@CheckSecurity.Postagem.PodeEditar
 	@Override
 	public FotoPostagemDTO atualizarFoto(String codigoPostagem, FotoPostagemInput fotoPostagemInput,
 			MultipartFile multipartFile) throws IOException {

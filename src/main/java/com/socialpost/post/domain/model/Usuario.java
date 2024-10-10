@@ -69,4 +69,8 @@ public class Usuario {
 		return getGrupos().remove(grupo);
 	}
 	
+	public boolean isNovo() {
+		return getId() == null;
+	}
+	
 }

@@ -16,6 +16,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.socialpost.post.api.PostLinks;
 import com.socialpost.post.api.assembler.GrupoDTOAssembler;
 import com.socialpost.post.api.dto.GrupoDTO;
+import com.socialpost.post.core.security.CheckSecurity;
 import com.socialpost.post.domain.model.Usuario;
 import com.socialpost.post.domain.service.CadastroUsuarioService;
 
@@ -32,6 +33,7 @@ public class UsuarioGrupoController {
 	@Autowired
 	private PostLinks postLinks;
 	
+	@CheckSecurity.UsuariosGruposPermissoes.PodeConsultar
 	@GetMapping
 	public CollectionModel<GrupoDTO> listar(@PathVariable Long usuarioId) {
 		Usuario usuario = usuarioService.buscarOuFalhar(usuarioId);
@@ -46,6 +48,7 @@ public class UsuarioGrupoController {
 		return gruposDTO;
 	}
 	
+	@CheckSecurity.UsuariosGruposPermissoes.PodeEditar
 	@PutMapping("/{grupoId}")
 	@ResponseStatus(HttpStatus.NO_CONTENT)
 	public ResponseEntity<Void> associar(@PathVariable Long usuarioId, @PathVariable Long grupoId) {
@@ -54,6 +57,7 @@ public class UsuarioGrupoController {
 		return ResponseEntity.noContent().build();
 	}
 	
+	@CheckSecurity.UsuariosGruposPermissoes.PodeEditar
 	@DeleteMapping("/{grupoId}")
 	@ResponseStatus(HttpStatus.NO_CONTENT)
 	public ResponseEntity<Void> desassociar(@PathVariable Long usuarioId, @PathVariable Long grupoId) {

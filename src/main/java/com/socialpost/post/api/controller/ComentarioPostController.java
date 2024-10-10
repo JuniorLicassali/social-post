@@ -25,7 +25,11 @@ import com.socialpost.post.api.assembler.ComentarioInputDisassembler;
 import com.socialpost.post.api.dto.ComentarioDTO;
 import com.socialpost.post.api.dto.input.ComentarioInput;
 import com.socialpost.post.api.openapi.controller.ComentarioPostControllerOpenApi;
+import com.socialpost.post.core.security.CheckSecurity;
+import com.socialpost.post.core.security.SocialPostSecurity;
 import com.socialpost.post.domain.model.Comentario;
+import com.socialpost.post.domain.model.Usuario;
+import com.socialpost.post.domain.service.CadastroUsuarioService;
 import com.socialpost.post.domain.service.ComentarioPostagemService;
 
 @RestController
@@ -44,6 +48,13 @@ public class ComentarioPostController implements ComentarioPostControllerOpenApi
 	@Autowired
 	private PostLinks postLinks;
 	
+	@Autowired
+	private CadastroUsuarioService usuarioService;
+	
+	@Autowired
+	private SocialPostSecurity socialPostSecurity;
+	
+	@CheckSecurity.Comentario.PodeConsultar
 	@Override
 	@GetMapping
 	public Page<ComentarioDTO> listar(@PathVariable String codigoPostagem, Pageable pageable) {
@@ -56,28 +67,27 @@ public class ComentarioPostController implements ComentarioPostControllerOpenApi
 		comentariosDTO.forEach(comentarioDTO -> {
 			comentarioDTO.add(postLinks.linkToComentarios(codigoPostagem, pageable, codigoPostagem));
 			
-//            comentarioDTO.add(WebMvcLinkBuilder.linkTo(
-//                WebMvcLinkBuilder.methodOn(ComentarioPostController.class)
-//                .listar(codigoPostagem, pageable))
-//                .withSelfRel());
         });
 		
 		return comentariosDTOPage;
 	}
 	
+	@CheckSecurity.Comentario.PodeEditar
 	@Override
 	@PostMapping
 	@ResponseStatus(HttpStatus.CREATED)
 	public ComentarioDTO adicionar(@PathVariable String codigoPostagem, @RequestBody @Valid ComentarioInput comentarioInput) {
 		Comentario comentario = comentarioInputDisassembler.toDomainObject(comentarioInput);
 		
-		Long usuarioId = comentario.getUsuario().getId();
+		Usuario usuario = usuarioService.buscarOuFalhar(socialPostSecurity.getUsuarioId());
 		
-		comentario = comentarioPostagemService.salvar(codigoPostagem, comentario, usuarioId);
+		comentario.setUsuario(usuario);
+		comentario = comentarioPostagemService.salvar(codigoPostagem, comentario, usuario.getId());
 		
 		return comentarioDTOAssembler.toModel(comentario);
 	}
 	
+	@CheckSecurity.Comentario.PodeExcluirComentario
 	@Override
 	@DeleteMapping("/{comentarioId}")
 	@ResponseStatus(HttpStatus.NO_CONTENT)
