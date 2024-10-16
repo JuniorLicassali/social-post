@@ -130,13 +130,5 @@ public class PostagemFotoController implements PostagemFotoControllerOpenApi {
 	public void excluir(@PathVariable String codigoPostagem) {
 		catalogoFotoPostagem.excluir(codigoPostagem);
 	}
-
-	@CheckSecurity.Postagem.PodeEditar
-	@Override
-	public FotoPostagemDTO atualizarFoto(String codigoPostagem, FotoPostagemInput fotoPostagemInput,
-			MultipartFile multipartFile) throws IOException {
-		// TODO Auto-generated method stub
-		return null;
-	}
 	
 }

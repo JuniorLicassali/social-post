@@ -2,7 +2,7 @@ package com.socialpost.post.api.dto.input;
 
 import javax.validation.constraints.NotNull;
 
-import io.swagger.annotations.ApiModelProperty;
+import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -10,7 +10,7 @@ import lombok.Setter;
 @Setter
 public class UsuarioAutorInput {
 	
-	@ApiModelProperty(example = "1")
+	@Schema(example = "1")
 	@NotNull
 	private Long id;
 

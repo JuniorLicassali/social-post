@@ -3,34 +3,23 @@ package com.socialpost.post.api.openapi.controller;
 import org.springframework.hateoas.CollectionModel;
 
 import com.socialpost.post.api.dto.PermissaoDTO;
-import com.socialpost.post.api.exceptionhandler.Problem;
 
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiOperation;
-import io.swagger.annotations.ApiParam;
-import io.swagger.annotations.ApiResponse;
-import io.swagger.annotations.ApiResponses;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
+import io.swagger.v3.oas.annotations.tags.Tag;
 
-@Api(tags = "Grupos - Permissões")
+@SecurityRequirement(name = "security_auth")
+@Tag(name = "Grupo Permissao")
 public interface GrupoPermissaoControllerOpenApi {
 	
-	@ApiOperation("Lista Permissões")
-	public CollectionModel<PermissaoDTO> listar(@ApiParam(value = "ID de um grupo", example = "1") Long grupoId);
+	@Operation(summary = "Lista os grupos e suas permissões")
+	public CollectionModel<PermissaoDTO> listar(@Parameter(description = "ID de um grupo", example = "1", required = true) Long grupoId);
 	
+	@Operation(summary = "Associa um grupo com uma permissão")
+	public void associar(@Parameter(description = "ID de um grupo", example = "1", required = true) Long grupoId, @Parameter(description = "ID de uma permissão", example = "1", required = true) Long permissaoId);
 	
-	@ApiOperation("Associa grupo a uma permissão")
-	@ApiResponses({
-		@ApiResponse(code = 204, message = "Grupo associado"),
-		@ApiResponse(code = 404, message = "Grupo ou Permissao inexistente", response = Problem.class)
-	})
-	public void associar(@ApiParam(value = "ID de um grupo", example = "1") Long grupoId, @ApiParam(value = "ID de uma permissão", example = "1") Long permissaoId);
-	
-	
-	@ApiOperation("Desassocia grupo de uma permissão")
-	@ApiResponses({
-		@ApiResponse(code = 204, message = "Grupo associado"),
-		@ApiResponse(code = 404, message = "Grupo ou Permissao inexistente", response = Problem.class)
-	})
-	public void desassociar(@ApiParam(value = "ID de um grupo", example = "1") Long grupoId, @ApiParam(value = "ID de uma permissão", example = "1") Long permissaoId);
+	@Operation(summary = "Desassocia um grupo com uma permissão")
+	public void desassociar(@Parameter(description = "ID de um grupo", example = "1", required = true) Long grupoId, @Parameter(description = "ID de uma permissão", example = "1", required = true) Long permissaoId);
 	
 }

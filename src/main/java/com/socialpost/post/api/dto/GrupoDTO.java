@@ -3,7 +3,7 @@ package com.socialpost.post.api.dto;
 import org.springframework.hateoas.RepresentationModel;
 import org.springframework.hateoas.server.core.Relation;
 
-import io.swagger.annotations.ApiModelProperty;
+import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -12,10 +12,10 @@ import lombok.Setter;
 @Setter
 public class GrupoDTO extends RepresentationModel<GrupoDTO> {
 
-	@ApiModelProperty(value = "ID do grupo", example = "1")
+	@Schema(example = "1")
 	private Long id;
 	
-	@ApiModelProperty(value = "Nome do grupo", example = "Administrador")
+	@Schema(example = "Administrador")
 	private String nome;
 	
 }

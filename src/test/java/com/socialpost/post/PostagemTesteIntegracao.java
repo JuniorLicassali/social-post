@@ -1,17 +1,16 @@
 package com.socialpost.post;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import java.time.OffsetDateTime;
 
 import org.flywaydb.core.Flyway;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.dao.DataIntegrityViolationException;
-import org.springframework.test.context.junit4.SpringRunner;
 
 import com.socialpost.post.domain.exception.EntidadeNaoEncontradaException;
 import com.socialpost.post.domain.model.Postagem;
@@ -19,7 +18,6 @@ import com.socialpost.post.domain.model.Usuario;
 import com.socialpost.post.domain.repository.PostagemRepository;
 import com.socialpost.post.domain.service.PostagemService;
 
-@RunWith(SpringRunner.class)
 @SpringBootTest()
 public class PostagemTesteIntegracao {
 	public static final String ID_POSTAGEM_INEXISTENTE = "10e49ddf-8f2f-487b-a9cf-1e79335685b1";
@@ -35,7 +33,7 @@ public class PostagemTesteIntegracao {
 	@Autowired
 	private Flyway flyway;
 	
-	@Before
+	@BeforeEach
 	public void setUp() {
 		flyway.migrate();
 	}
@@ -77,7 +75,7 @@ public class PostagemTesteIntegracao {
 	
 	///////////////////////////////////////////////////////////////////////////////////
 	
-	@Test(expected = DataIntegrityViolationException.class)
+	@Test
 	public void deveFalharAoCadastrarPostagem_QuandoSemDescricao() {
 		Usuario autor = new Usuario();
 		autor.setId(1L);
@@ -88,17 +86,23 @@ public class PostagemTesteIntegracao {
 		postagem.setId(3L);
 		postagem.setDataPostagem(OffsetDateTime.now());
 		
-		postagemService.salvar(postagem);
+		assertThrows(DataIntegrityViolationException.class, () -> {
+			postagemService.salvar(postagem);
+		});
 	}
 	
-	@Test(expected = EntidadeNaoEncontradaException.class)
+	@Test
 	public void deveFalharAoExcluirPostagem_QuandoInexistente() {
-		postagemService.excluir(ID_POSTAGEM_INEXISTENTE);
+		assertThrows(EntidadeNaoEncontradaException.class, () -> {
+			postagemService.excluir(ID_POSTAGEM_INEXISTENTE);
+		});
 	}
 	
-	@Test(expected = EntidadeNaoEncontradaException.class)
+	@Test
 	public void deveFalharAoBuscarUmaPostagem_QuandoInexistente() {
-		postagemService.buscarOuFalhar(ID_POSTAGEM_INEXISTENTE);
+		assertThrows(EntidadeNaoEncontradaException.class, () -> {
+			postagemService.buscarOuFalhar(ID_POSTAGEM_INEXISTENTE);
+		});
 	}
 	
 }

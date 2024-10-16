@@ -1,5 +1,7 @@
 package com.socialpost.post.api.controller;
 
+import java.util.Map;
+
 import javax.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,7 +21,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.google.common.collect.ImmutableMap;
 import com.socialpost.post.api.PostLinks;
 import com.socialpost.post.api.ResourceUriHelper;
 import com.socialpost.post.api.assembler.PostagemDTOAssembler;
@@ -139,7 +140,7 @@ public class PostagemController implements PostagemControllerOpenApi {
 	}
 	
 	private Pageable traduzirPageable(Pageable apiPageable) {
-		var mapeamento = ImmutableMap.of(
+		var mapeamento = Map.of(
 				"autorId", "autor.id"
 			);
 		return PageableTranslator.translate(apiPageable, mapeamento);

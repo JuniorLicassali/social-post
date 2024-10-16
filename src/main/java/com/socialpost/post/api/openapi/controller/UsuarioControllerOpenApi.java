@@ -6,41 +6,30 @@ import com.socialpost.post.api.dto.UsuarioDTO;
 import com.socialpost.post.api.dto.input.SenhaInput;
 import com.socialpost.post.api.dto.input.UsuarioComSenhaInput;
 import com.socialpost.post.api.dto.input.UsuarioInput;
-import com.socialpost.post.api.exceptionhandler.Problem;
 
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiOperation;
-import io.swagger.annotations.ApiParam;
-import io.swagger.annotations.ApiResponse;
-import io.swagger.annotations.ApiResponses;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.parameters.RequestBody;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
+import io.swagger.v3.oas.annotations.tags.Tag;
 
-@Api(tags = "Usuários")
+@SecurityRequirement(name = "security_auth")
+@Tag(name = "Usuarios")
 public interface UsuarioControllerOpenApi {
 
-	@ApiOperation("Lista os usuários")
+	@Operation(summary = "Lista os usuários")
 	public CollectionModel<UsuarioDTO> listar();
 	
-	@ApiOperation("Busca um usuario por ID")
-	public UsuarioDTO buscar(@ApiParam(value = "ID de um usuário", example = "1") Long usuarioId);
+	@Operation(summary = "Busca um usuário por ID")
+	public UsuarioDTO buscar(@Parameter(description = "ID de um usuário", example = "1", required = true) Long usuarioId);
 	
-	@ApiOperation("Cadastra um novo usuário")
-	@ApiResponses({
-		@ApiResponse(code = 400, message = "Corpo da requisição inválido")
-	})
-	public UsuarioDTO salvar(@ApiParam(name = "corpo", value = "Representação de um novo usuário") UsuarioComSenhaInput usuarioComSenha);
+	@Operation(summary = "Salva um usuário")
+	public UsuarioDTO salvar(@RequestBody(description = "Representação de um usuário", required = true) UsuarioComSenhaInput usuarioComSenha);
 	
+	@Operation(summary = "Atualiza um usuário por ID")
+	public UsuarioDTO atualizar(@Parameter(description = "ID de um usuário", example = "1", required = true) Long usuarioId, @RequestBody(description = "Representação de um usuário existente", required = true) UsuarioInput usuarioInput);
 	
-	@ApiOperation("Atualiza um usuário por ID")
-	@ApiResponses({
-		@ApiResponse(code = 200, message = "Usuário atualizado"),
-		@ApiResponse(code = 404, message = "Usuário não encontrado", response = Problem.class)
-	})
-	public UsuarioDTO atualizar(@ApiParam(value = "ID de um usuário", example = "1") Long usuarioId, @ApiParam(name = "corpo", value = "Representação de um novo usuário") UsuarioInput usuarioInput);
-	
-	@ApiOperation("Altera senha de um usuário por ID")
-	@ApiResponses({
-		@ApiResponse(code = 400, message = "Corpo da requisição inválido"),
-		@ApiResponse(code = 404, message = "Usuário não encontrado", response = Problem.class)
-	})
-	public void alterarSenha(@ApiParam(value = "ID de um usuário", example = "1") Long usuarioId, @ApiParam(name = "corpo", value = "Representação de uma nova senha") SenhaInput senhaInput);
+	@Operation(summary = "Altera senha de um usuário")
+	public void alterarSenha(@Parameter(description = "ID de um usuário", example = "1", required = true) Long usuarioId, 
+			@RequestBody(description = "Representação de uma nova senha", required = true) SenhaInput senhaInput);
 }

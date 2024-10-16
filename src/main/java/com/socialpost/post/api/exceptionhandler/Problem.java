@@ -6,47 +6,46 @@ import java.util.List;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
 
-import io.swagger.annotations.ApiModel;
-import io.swagger.annotations.ApiModelProperty;
+import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Builder;
 import lombok.Getter;
 
-@ApiModel("Problema")
 @JsonInclude((Include.NON_NULL))
 @Getter
 @Builder
+@Schema(name = "Problema")
 public class Problem {
 	
-	@ApiModelProperty(example = "400", position = 1)
+	@Schema(example = "400")
 	private Integer status;
 	
-	@ApiModelProperty(example = "2024-08-02T23:00:30-03:00", position = 2)
+	@Schema(example = "2024-08-02T23:00:30-03:00")
 	private OffsetDateTime timestamp;
 	
-	@ApiModelProperty(example = "https://algafood.com.br/dados-invalidos", position = 3)
+	@Schema(example = "https://socialpost.com.br/dados-invalidos")
 	private String type;
 	
-	@ApiModelProperty(example = "Dados inválidos.", position = 4)
+	@Schema(example = "Dados inválidos.")
 	private String title;
 	
-	@ApiModelProperty(example = "Um ou mais campos estão inválidos. Faça o preenchimento correto e tente novamente.", position = 4)
+	@Schema(example = "Um ou mais campos estão inválidos. Faça o preenchimento correto e tente novamente.")
 	private String detail;
 	
-	@ApiModelProperty(example = "Um ou mais campos estão inválidos. Faça o preenchimento correto e tente novamente.", position = 5)
+	@Schema(example = "Um ou mais campos estão inválidos. Faça o preenchimento correto e tente novamente.")
 	private String userMessage;
 	
-	@ApiModelProperty(position = 6)
+	@Schema(example = "Lista de objetos ou campos que geraram o erro")
 	private List<Objects> objects;
 	
-	@ApiModel("ObjetoProblema")
 	@Getter
 	@Builder
+	@Schema(example = "ObjetoProblema")
 	public static class Objects {
 		
-		@ApiModelProperty(example = "nome", position = 7)
+		@Schema(example = "descricao")
 		private String name;
 		
-		@ApiModelProperty(example = "A mensagem é obrigatória", position = 8)
+		@Schema(example = "A descriçao é inválida")
 		private String userMessage;
 	}
 

@@ -1,22 +1,20 @@
 package com.socialpost.post;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import org.flywaydb.core.Flyway;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.dao.DataIntegrityViolationException;
-import org.springframework.test.context.junit4.SpringRunner;
 
 import com.socialpost.post.domain.exception.GrupoNaoEncontradoException;
 import com.socialpost.post.domain.model.Grupo;
 import com.socialpost.post.domain.repository.GrupoRepository;
 import com.socialpost.post.domain.service.CadastroGrupoService;
 
-@RunWith(SpringRunner.class)
 @SpringBootTest()
 public class GrupoTesteIntegracao {
 	
@@ -33,7 +31,7 @@ public class GrupoTesteIntegracao {
 	@Autowired
 	private Flyway flyway;
 	
-	@Before
+	@BeforeEach
 	public void setUp() {
 		flyway.migrate();
 	}
@@ -68,22 +66,28 @@ public class GrupoTesteIntegracao {
 	
 	///////////////////////////////////////////////////////////////////////////////////
 	
-	@Test(expected = DataIntegrityViolationException.class)
+	@Test
 	public void deveFalharAoCadastrarGrupo_QuandoSemNome() {
 		Grupo grupo = new Grupo();
 		grupo.setId(3L);
 		
-		grupoService.salvar(grupo);
+		assertThrows(DataIntegrityViolationException.class, () -> {
+			grupoService.salvar(grupo);
+		});
 	}
 	
-	@Test(expected = GrupoNaoEncontradoException.class)
+	@Test
 	public void deveFalharAoExcluirGrupo_QuandoNaoExistir() {
-		grupoService.excluir(ID_GRUPO_INEXISTENTE);
+		assertThrows(GrupoNaoEncontradoException.class, () -> {
+			grupoService.excluir(ID_GRUPO_INEXISTENTE);
+		});
 	}
 	
-	@Test(expected = GrupoNaoEncontradoException.class)
+	@Test
 	public void deveFalharAoBuscarGrupo_QuandoNaoExisitir() {
-		grupoService.buscarOuFalhar(ID_GRUPO_INEXISTENTE);
+		assertThrows(GrupoNaoEncontradoException.class, () -> {
+			grupoService.buscarOuFalhar(ID_GRUPO_INEXISTENTE);
+		});
 	}
 
 }

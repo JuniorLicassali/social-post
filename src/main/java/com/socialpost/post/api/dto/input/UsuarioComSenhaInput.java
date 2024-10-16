@@ -2,7 +2,7 @@ package com.socialpost.post.api.dto.input;
 
 import javax.validation.constraints.NotBlank;
 
-import io.swagger.annotations.ApiModelProperty;
+import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -10,7 +10,7 @@ import lombok.Setter;
 @Setter
 public class UsuarioComSenhaInput extends UsuarioInput {
 
-	@ApiModelProperty(value = "Senha de um usuário", example = "123")
+	@Schema(example = "123")
 	@NotBlank
 	private String senha;
 	

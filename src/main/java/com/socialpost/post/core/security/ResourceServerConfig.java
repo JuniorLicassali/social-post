@@ -21,11 +21,10 @@ import org.springframework.security.oauth2.server.resource.authentication.JwtGra
 @EnableGlobalMethodSecurity(prePostEnabled = true)
 public class ResourceServerConfig extends WebSecurityConfigurerAdapter {
 
-	@Override
 	protected void configure(HttpSecurity http) throws Exception {
 		http
 			.formLogin().loginPage("/login")
-			.defaultSuccessUrl("/oauth/authorize?response_type=code&client_id=analytics-example&state=abc&redirect_uri=http://aplicacao-cliente")
+//			.defaultSuccessUrl("/oauth/authorize?response_type=code&client_id=web&state=abc&redirect_uri=http://aplicacao-cliente")
 			.and()
 			.authorizeRequests()
 				.antMatchers("/oauth/**").authenticated()

@@ -2,7 +2,7 @@ package com.socialpost.post.api.dto.input;
 
 import javax.validation.constraints.NotBlank;
 
-import io.swagger.annotations.ApiModelProperty;
+import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -10,12 +10,8 @@ import lombok.Setter;
 @Setter
 public class ComentarioInput {
 
-	@ApiModelProperty(example = "Ótima postagem!!!", required = true)
+	@Schema(example = "Ótima postagem!!!")
 	@NotBlank
 	private String texto;
-	
-//	@Valid
-//	@NotNull
-//	private UsuarioAutorInput usuario;
 	
 }

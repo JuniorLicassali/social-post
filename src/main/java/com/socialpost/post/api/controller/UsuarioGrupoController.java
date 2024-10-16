@@ -16,13 +16,14 @@ import org.springframework.web.bind.annotation.RestController;
 import com.socialpost.post.api.PostLinks;
 import com.socialpost.post.api.assembler.GrupoDTOAssembler;
 import com.socialpost.post.api.dto.GrupoDTO;
+import com.socialpost.post.api.openapi.controller.UsuarioGrupoControllerOpenApi;
 import com.socialpost.post.core.security.CheckSecurity;
 import com.socialpost.post.domain.model.Usuario;
 import com.socialpost.post.domain.service.CadastroUsuarioService;
 
 @RestController
 @RequestMapping(path = "/usuarios/{usuarioId}/grupos", produces = MediaType.APPLICATION_JSON_VALUE)
-public class UsuarioGrupoController {
+public class UsuarioGrupoController implements UsuarioGrupoControllerOpenApi {
 	
 	@Autowired
 	private CadastroUsuarioService usuarioService;

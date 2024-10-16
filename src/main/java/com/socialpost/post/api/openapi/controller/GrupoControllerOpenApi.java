@@ -4,48 +4,31 @@ import org.springframework.hateoas.CollectionModel;
 
 import com.socialpost.post.api.dto.GrupoDTO;
 import com.socialpost.post.api.dto.input.GrupoInput;
-import com.socialpost.post.api.exceptionhandler.Problem;
 
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiOperation;
-import io.swagger.annotations.ApiParam;
-import io.swagger.annotations.ApiResponse;
-import io.swagger.annotations.ApiResponses;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.parameters.RequestBody;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
+import io.swagger.v3.oas.annotations.tags.Tag;
 
-@Api(tags = "Grupos")
+@SecurityRequirement(name = "security_auth")
+@Tag(name = "Grupos")
 public interface GrupoControllerOpenApi {
 
-	@ApiOperation("Lista os grupos")
+	@Operation(summary = "Lista os grupos")
 	public CollectionModel<GrupoDTO> listar();
+
+	@Operation(summary = "Busca um grupo por ID")
+	public GrupoDTO buscar(@Parameter(description = "ID de um grupo", example = "1", required = true)Long grupoId);
+
+	@Operation(summary = "Cria um grupo")
+	public GrupoDTO adicionar(@RequestBody(description = "Representação de um novo grupo", required = true) GrupoInput grupoInput);
+
+	@Operation(summary = "Atualiza um grupo por ID")
+	public GrupoDTO atualizar(@Parameter(description = "ID de um grupo", example = "1", required = true) Long grupoId, 
+			@RequestBody(description = "Representação de um grupo existente", required = true) GrupoInput grupoInput);
 	
-	
-	@ApiOperation("Busca um grupo por ID")
-	@ApiResponses({
-		@ApiResponse(code = 400, message = "ID de grupo inválido", response = Problem.class),
-		@ApiResponse(code = 404, message = "Grupo não encontrado", response = Problem.class)
-	})
-	public GrupoDTO buscar(@ApiParam(value = "ID de um grupo", example = "1")Long grupoId);
-	
-	
-	@ApiOperation("Cadastra um grupo")
-	@ApiResponses({
-		@ApiResponse(code = 400, message = "Corpo da requisição inválido")
-	})
-	public GrupoDTO adicionar(@ApiParam(name = "corpo", value = "Representação de um novo grupo") GrupoInput grupoInput);
-	
-	
-	@ApiOperation("Atualiza um grupo por id")
-	@ApiResponses({
-		@ApiResponse(code = 200, message = "Grupo atualizado"),
-		@ApiResponse(code = 404, message = "Grupo não encontrado", response = Problem.class)
-	})
-	public GrupoDTO atualizar(@ApiParam(value = "ID de um grupo", example = "1") Long grupoId, @ApiParam(name = "corpo", value = "Representação de um novo grupo") GrupoInput grupoInput);
-	
-	@ApiOperation("Exclui um grupo por ID")
-	@ApiResponses({
-		@ApiResponse(code = 204, message = "Grupo excluído"),
-		@ApiResponse(code = 404, message = "Grupo não encontrado", response = Problem.class)
-	})
-	public void remover(@ApiParam(value = "ID de um grupo", example = "1") Long grupoId);
-	
+	@Operation(summary = "Exclui um grupo por ID")
+	public void remover(@Parameter(description = "ID de um grupo", example = "1", required = true) Long grupoId);
+
 }

@@ -6,47 +6,40 @@ import javax.validation.Valid;
 
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.HttpMediaTypeNotAcceptableException;
-import org.springframework.web.multipart.MultipartFile;
 
 import com.socialpost.post.api.dto.FotoPostagemDTO;
 import com.socialpost.post.api.dto.input.FotoPostagemInput;
-import com.socialpost.post.api.exceptionhandler.Problem;
 
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiOperation;
-import io.swagger.annotations.ApiParam;
-import io.swagger.annotations.ApiResponse;
-import io.swagger.annotations.ApiResponses;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.parameters.RequestBody;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
+import io.swagger.v3.oas.annotations.tags.Tag;
 
-@Api(tags = "Postagens")
+@SecurityRequirement(name = "security_auth")
+@Tag(name = "Postagens")
 public interface PostagemFotoControllerOpenApi {
 	
-	@ApiOperation(value = "Busca a foto de uma postagem", produces = "application/json, image/jpeg, image/png")
-	@ApiResponses({
-		@ApiResponse(code = 400, message = "Código da postagem inválido", response = Problem.class),
-		@ApiResponse(code = 404, message = "Foto da postagem não encontrada", response = Problem.class)
+	@Operation(summary = "Busca a foto do produto de um restaurante", responses = {
+			@ApiResponse(responseCode = "200", content = {
+					@Content(mediaType = "application/json", schema = @Schema(implementation = FotoPostagemDTO.class)),
+					@Content(mediaType = "image/jpeg", schema = @Schema(type = "string", format = "binary")),
+					@Content(mediaType = "image/png", schema = @Schema(type = "string", format = "binary"))
+			})
 	})
-	public FotoPostagemDTO buscar(@ApiParam(value = "Código de uma postagem", example = "10e49ddf-8f2f-487b-a9cf-1e79335685b0") String codigoPostagem);
+	public FotoPostagemDTO buscar(@Parameter(description = "Código de uma postagem", example = "10e49ddf-8f2f-487b-a9cf-1e79335685b0", required = true) String codigoPostagem);
 	
-	@ApiOperation(value = "Busca a foto de uma postagem", hidden = true)
-	public ResponseEntity<?> servirFoto(String codigoPostagem, String acceptHeader) throws HttpMediaTypeNotAcceptableException;
-
-	@ApiOperation("Atualiza a foto da postagem")
-	@ApiResponses({
-		@ApiResponse(code = 200, message = "Foto da postagem atualizada"),
-		@ApiResponse(code = 404, message = "Postagem não encontrada", response = Problem.class)
-	})
-	public FotoPostagemDTO atualizarFoto(@ApiParam(value = "Código de uma postagem", example = "10e49ddf-8f2f-487b-a9cf-1e79335685b0", required = true) String codigoPostagem, 
-			FotoPostagemInput fotoPostagemInput, @ApiParam(value = "Arquivo da foto da postagem (máximo 10MB, apenas JPG e PNG)", required = true) MultipartFile multipartFile) throws IOException;
+	@Operation(hidden = true)
+	public ResponseEntity<?> servirFoto(@Parameter(description = "Código de uma postagem", example = "10e49ddf-8f2f-487b-a9cf-1e79335685b0", required = true) String codigoPostagem, String acceptHeader) throws HttpMediaTypeNotAcceptableException;
 	
-	@ApiOperation("Exclui a foto da postagem")
-	@ApiResponses({
-		@ApiResponse(code = 204, message = "Foto da postagem excluída"),
-		@ApiResponse(code = 400, message = "Código da postagem inválido", response = Problem.class),
-		@ApiResponse(code = 404, message = "Foto da postagem não encontrada", response = Problem.class)
-	})
-	public void excluir(@ApiParam(value = "Código da postagem", example = "10e49ddf-8f2f-487b-a9cf-1e79335685b0") String codigoPostagem);
+	@Operation(summary = "Exclui foto da postagem")
+	public void excluir(@Parameter(description = "Código de uma postagem", example = "10e49ddf-8f2f-487b-a9cf-1e79335685b0", required = true) String codigoPostagem);
 
-	FotoPostagemDTO atualizarFoto(String codigoPostagem, @Valid FotoPostagemInput fotoPostagemInput) throws IOException;
+	@Operation(summary = "Atualiza foto da postagem")
+	public FotoPostagemDTO atualizarFoto(@Parameter(description = "Código de uma postagem", example = "10e49ddf-8f2f-487b-a9cf-1e79335685b0", required = true) String codigoPostagem, 
+			@RequestBody(description = "Representação de uma foto", required = true) @Valid FotoPostagemInput fotoPostagemInput) throws IOException;
 	
 }

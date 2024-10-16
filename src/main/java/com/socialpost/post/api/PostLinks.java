@@ -35,7 +35,7 @@ public class PostLinks {
 		
 		String postagensUrl = WebMvcLinkBuilder.linkTo(PostagemController.class).toUri().toString();
 		
-		return new Link(UriTemplate.of(postagensUrl, PAGINACAO_VARIABLES.concat(filtroVariables)), "postagens");
+		return Link.of(UriTemplate.of(postagensUrl, PAGINACAO_VARIABLES.concat(filtroVariables)), "postagens");
 	}
 	
 	public Link linkToPostagem(String codigoPostagem, String rel) {
@@ -77,7 +77,7 @@ public class PostLinks {
 		
 		UriTemplate uriTemplate = UriTemplate.of(comentariosUrl, PAGINACAO_VARIABLES);
 		
-		return new Link(uriTemplate, "comentarios");
+		return Link.of(uriTemplate, "comentarios");
 	}
 	
 	public Link linkToGrupos(String rel) {

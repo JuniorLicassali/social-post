@@ -3,7 +3,7 @@ package com.socialpost.post.api.dto;
 import org.springframework.hateoas.RepresentationModel;
 import org.springframework.hateoas.server.core.Relation;
 
-import io.swagger.annotations.ApiModelProperty;
+import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -12,12 +12,12 @@ import lombok.Setter;
 @Setter
 public class UsuarioDTO extends RepresentationModel<UsuarioDTO> {
 
-	@ApiModelProperty(value = "ID de um usuário", example = "1", position = 1)
+	@Schema(example = "1")
 	private Long id;
 	
-	@ApiModelProperty(value = "Nome de um usuário", example = "Sebastiao da Galera", position = 2)
+	@Schema(example = "Sebastiao da Galera")
 	private String nome;
 	
-	@ApiModelProperty(value = "Email de um usuário", example = "email@example.com", position = 3)
+	@Schema(example = "email@example.com")
 	private String email;
 }

@@ -5,32 +5,28 @@ import org.springframework.data.domain.Pageable;
 
 import com.socialpost.post.api.dto.ComentarioDTO;
 import com.socialpost.post.api.dto.input.ComentarioInput;
-import com.socialpost.post.api.exceptionhandler.Problem;
+import com.socialpost.post.core.springdoc.PageableParameter;
 
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiOperation;
-import io.swagger.annotations.ApiParam;
-import io.swagger.annotations.ApiResponse;
-import io.swagger.annotations.ApiResponses;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.parameters.RequestBody;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
+import io.swagger.v3.oas.annotations.tags.Tag;
 
-@Api(tags = "Comentários")
+@SecurityRequirement(name = "security_auth")
+@Tag(name = "Comentarios")
 public interface ComentarioPostControllerOpenApi {
 
-	@ApiOperation("Lista os comentários")
-	public Page<ComentarioDTO> listar(@ApiParam(value = "Código de uma postagem", example = "10e49ddf-8f2f-487b-a9cf-1e79335685b0") String codigoPostagem, Pageable pageable);
+	@PageableParameter
+	@Operation(summary = "Lista os comentários")
+	public Page<ComentarioDTO> listar(@Parameter(description = "Código de uma postagem", example = "10e49ddf-8f2f-487b-a9cf-1e79335685b0", required = true) String codigoPostagem, Pageable pageable);
 	
-	@ApiOperation("Adiciona um comentário")
-	@ApiResponses({
-		@ApiResponse(code = 400, message = "Código da postagem inválido", response = Problem.class),
-		@ApiResponse(code = 404, message = "Postagem não encontrada", response = Problem.class)
-	})
-	public ComentarioDTO adicionar(@ApiParam(value = "Código de uma postagem", example = "10e49ddf-8f2f-487b-a9cf-1e79335685b0") String codigoPostagem, @ApiParam(name = "corpo", value = "Representação de um novo comentário") ComentarioInput comentarioInput);
+	@Operation(summary = "Adiciona um comentário a uma postagem")
+	public ComentarioDTO adicionar(@Parameter(description = "Código de uma postagem", example = "10e49ddf-8f2f-487b-a9cf-1e79335685b0", required = true) String codigoPostagem, 
+			@RequestBody(description = "Representação de um novo comentário") ComentarioInput comentarioInput);
 	
-	@ApiOperation("Exclui um comentário por ID")
-	@ApiResponses({
-		@ApiResponse(code = 204, message = "Comentário excluído"),
-		@ApiResponse(code = 404, message = "Comentário não encontrado", response = Problem.class)
-	})
-	public void excluir(@ApiParam(value = "Código de uma postagem", example = "10e49ddf-8f2f-487b-a9cf-1e79335685b0") String codigoPostagem, @ApiParam(value = "ID de um comentário", example = "1") Long comentarioId);
+	@Operation(summary = "Exclui um comentário por id")
+	public void excluir(@Parameter(description = "Código de uma postagem", example = "10e49ddf-8f2f-487b-a9cf-1e79335685b0", required = true) String codigoPostagem, 
+			@Parameter(description = "ID de um comentário", example = "1", required = true)Long comentarioId);
 	
 }
