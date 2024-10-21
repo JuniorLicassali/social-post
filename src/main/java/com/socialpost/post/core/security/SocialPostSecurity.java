@@ -19,10 +19,20 @@ public class SocialPostSecurity {
 	}
 
 	public Long getUsuarioId() {
+//		Jwt jwt =(Jwt) getAuthentication().getPrincipal();
+//		return jwt.getClaim("usuario_id");
 		
-		Jwt jwt =(Jwt) getAuthentication().getPrincipal();
-		
-		return jwt.getClaim("usuario_id");
+		Jwt jwt = (Jwt) getAuthentication().getPrincipal();
+	    
+	    String usuarioIdStr = jwt.getClaimAsString("usuario_id");
+	    if (usuarioIdStr != null) {
+	        try {
+	            return Long.valueOf(usuarioIdStr);
+	        } catch (NumberFormatException e) {
+	            throw new IllegalArgumentException("usuario_id is not a valid Long", e);
+	        }
+	    }
+	    throw new IllegalArgumentException("usuario_id claim is missing");
 	}
 	
 	public boolean editaPostagem(String codigoPostagem) {

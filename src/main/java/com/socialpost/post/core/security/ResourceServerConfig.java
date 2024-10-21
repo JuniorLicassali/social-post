@@ -2,66 +2,60 @@ package com.socialpost.post.core.security;
 
 import java.util.Collection;
 import java.util.Collections;
+import java.util.List;
 import java.util.stream.Collectors;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
-import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationConverter;
 import org.springframework.security.oauth2.server.resource.authentication.JwtGrantedAuthoritiesConverter;
+import org.springframework.security.web.SecurityFilterChain;
 
 @Configuration
-@EnableWebSecurity
 @EnableGlobalMethodSecurity(prePostEnabled = true)
-public class ResourceServerConfig extends WebSecurityConfigurerAdapter {
+@EnableWebSecurity
+public class ResourceServerConfig {
 
-	protected void configure(HttpSecurity http) throws Exception {
+	@Bean
+	public SecurityFilterChain resourceServerFilterChain(HttpSecurity http) throws Exception {
 		http
-			.formLogin().loginPage("/login")
-//			.defaultSuccessUrl("/oauth/authorize?response_type=code&client_id=web&state=abc&redirect_uri=http://aplicacao-cliente")
-			.and()
 			.authorizeRequests()
-				.antMatchers("/oauth/**").authenticated()
+			.antMatchers("/oauth2/**").authenticated()
 			.and()
 			.csrf().disable()
 			.cors().and()
-			.oauth2ResourceServer()
-				.jwt()
-				.jwtAuthenticationConverter(jwtAuthenticationConverter());
+			.oauth2ResourceServer().jwt().jwtAuthenticationConverter(jwtAuthenticationConverter());
+		
+		return http.formLogin(customizer -> customizer.loginPage("/login")).build();
 	}
 	
 	private JwtAuthenticationConverter jwtAuthenticationConverter() {
-		var jwtAuthenticationConverter = new JwtAuthenticationConverter();
-		jwtAuthenticationConverter.setJwtGrantedAuthoritiesConverter(jwt -> {
-			var authorities = jwt.getClaimAsStringList("authorities");
-			
-			if (authorities == null) {
-				authorities = Collections.emptyList();
-			}
-			  
-			var scopesAuthoritiesConverter = new JwtGrantedAuthoritiesConverter();
-			Collection<GrantedAuthority> grantedAuthorities = scopesAuthoritiesConverter.convert(jwt);
-			
-			grantedAuthorities.addAll(authorities.stream()
-					.map(SimpleGrantedAuthority::new)
-					.collect(Collectors.toList()));
-			
-			return grantedAuthorities;
-		});
-		
-		return jwtAuthenticationConverter;
-	}
-	
-	@Bean
-	@Override
-	protected AuthenticationManager authenticationManager() throws Exception {
-		return super.authenticationManager();
+		JwtAuthenticationConverter converter = new JwtAuthenticationConverter();
+
+        converter.setJwtGrantedAuthoritiesConverter(jwt -> {
+            List<String> authorities = jwt.getClaimAsStringList("authorities");
+
+            if (authorities == null) {
+                return Collections.emptyList();
+            }
+
+            JwtGrantedAuthoritiesConverter authoritiesConverter = new JwtGrantedAuthoritiesConverter();
+            Collection<GrantedAuthority> grantedAuthorities = authoritiesConverter.convert(jwt);
+
+            grantedAuthorities.addAll(authorities
+                    .stream()
+                    .map(SimpleGrantedAuthority::new)
+                    .collect(Collectors.toList()));
+
+            return grantedAuthorities;
+        });
+
+        return converter;
 	}
 	
 }

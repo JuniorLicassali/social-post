@@ -1,0 +1,1996 @@
+{
+  "openapi": "3.0.1",
+  "info": {
+    "title": "SocialPost API",
+    "description": "API aberta para desenvolvedores e usuários",
+    "license": {
+      "name": "Apache 2.0",
+      "url": "http://springdoc.com"
+    },
+    "version": "v1"
+  },
+  "servers": [
+    {
+      "url": "http://localhost:8080",
+      "description": "Generated server url"
+    }
+  ],
+  "tags": [
+    {
+      "name": "Postagens",
+      "description": "Gerencia as postagens"
+    },
+    {
+      "name": "Comentarios",
+      "description": "Gerencia os comentários"
+    },
+    {
+      "name": "Grupos",
+      "description": "Gerencia os grupos"
+    },
+    {
+      "name": "Grupo Permissao",
+      "description": "Gerencia os grupos e suas permissões"
+    },
+    {
+      "name": "Permissao",
+      "description": "Gerencia as permissões"
+    },
+    {
+      "name": "Usuarios",
+      "description": "Gerencia os usuários"
+    }
+  ],
+  "paths": {
+    "/usuarios/{usuarioId}": {
+      "get": {
+        "tags": [
+          "Usuarios"
+        ],
+        "summary": "Busca um usuário por ID",
+        "operationId": "buscar",
+        "parameters": [
+          {
+            "name": "usuarioId",
+            "in": "path",
+            "description": "ID de um usuário",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            },
+            "example": 1
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/UsuarioDTO"
+                }
+              }
+            }
+          },
+          "406": {
+            "$ref": "#/components/responses/NotAcceptableResponse"
+          },
+          "500": {
+            "$ref": "#/components/responses/InternalServerErrorResponse"
+          }
+        },
+        "security": [
+          {
+            "security_auth": []
+          }
+        ]
+      },
+      "put": {
+        "tags": [
+          "Usuarios"
+        ],
+        "summary": "Atualiza um usuário por ID",
+        "operationId": "atualizar",
+        "parameters": [
+          {
+            "name": "usuarioId",
+            "in": "path",
+            "description": "ID de um usuário",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            },
+            "example": 1
+          }
+        ],
+        "requestBody": {
+          "description": "Representação de um usuário existente",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UsuarioInput"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/UsuarioDTO"
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequestResponse"
+          },
+          "500": {
+            "$ref": "#/components/responses/InternalServerErrorResponse"
+          }
+        },
+        "security": [
+          {
+            "security_auth": []
+          }
+        ]
+      }
+    },
+    "/usuarios/{usuarioId}/senha": {
+      "put": {
+        "tags": [
+          "Usuarios"
+        ],
+        "summary": "Altera senha de um usuário",
+        "operationId": "alterarSenha",
+        "parameters": [
+          {
+            "name": "usuarioId",
+            "in": "path",
+            "description": "ID de um usuário",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            },
+            "example": 1
+          }
+        ],
+        "requestBody": {
+          "description": "Representação de uma nova senha",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/SenhaInput"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequestResponse"
+          },
+          "500": {
+            "$ref": "#/components/responses/InternalServerErrorResponse"
+          }
+        },
+        "security": [
+          {
+            "security_auth": []
+          }
+        ]
+      }
+    },
+    "/usuarios/{usuarioId}/grupos/{grupoId}": {
+      "put": {
+        "tags": [
+          "Usuarios"
+        ],
+        "summary": "Associa usuário a um grupo",
+        "operationId": "associar",
+        "parameters": [
+          {
+            "name": "usuarioId",
+            "in": "path",
+            "description": "ID de um usuário",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            },
+            "example": 1
+          },
+          {
+            "name": "grupoId",
+            "in": "path",
+            "description": "ID de um grupo",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            },
+            "example": 1
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "No Content"
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequestResponse"
+          },
+          "500": {
+            "$ref": "#/components/responses/InternalServerErrorResponse"
+          }
+        },
+        "security": [
+          {
+            "security_auth": []
+          }
+        ]
+      },
+      "delete": {
+        "tags": [
+          "Usuarios"
+        ],
+        "summary": "Desassocia usuário a um grupo",
+        "operationId": "desassociar",
+        "parameters": [
+          {
+            "name": "usuarioId",
+            "in": "path",
+            "description": "ID de um usuário",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            },
+            "example": 1
+          },
+          {
+            "name": "grupoId",
+            "in": "path",
+            "description": "ID de um grupo",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            },
+            "example": 1
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "No Content"
+          },
+          "500": {
+            "$ref": "#/components/responses/InternalServerErrorResponse"
+          }
+        },
+        "security": [
+          {
+            "security_auth": []
+          }
+        ]
+      }
+    },
+    "/postagem/{codigoPostagem}": {
+      "get": {
+        "tags": [
+          "Postagens"
+        ],
+        "summary": "Busca uma postagem por ID",
+        "operationId": "buscar_1",
+        "parameters": [
+          {
+            "name": "codigoPostagem",
+            "in": "path",
+            "description": "Código de uma postagem",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "example": "10e49ddf-8f2f-487b-a9cf-1e79335685b0"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PostagemDTO"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Código de postagem inválido",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Problema"
+                }
+              }
+            }
+          },
+          "406": {
+            "$ref": "#/components/responses/NotAcceptableResponse"
+          },
+          "500": {
+            "$ref": "#/components/responses/InternalServerErrorResponse"
+          }
+        },
+        "security": [
+          {
+            "security_auth": []
+          }
+        ]
+      },
+      "put": {
+        "tags": [
+          "Postagens"
+        ],
+        "summary": "Atualiza uma postagem por ID",
+        "operationId": "atualizar_1",
+        "parameters": [
+          {
+            "name": "codigoPostagem",
+            "in": "path",
+            "description": "Código de uma postagem",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "example": "10e49ddf-8f2f-487b-a9cf-1e79335685b0"
+          }
+        ],
+        "requestBody": {
+          "description": "Representação de uma postagem existente",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/PostagemUpdateInput"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PostagemDTO"
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequestResponse"
+          },
+          "500": {
+            "$ref": "#/components/responses/InternalServerErrorResponse"
+          }
+        },
+        "security": [
+          {
+            "security_auth": []
+          }
+        ]
+      },
+      "delete": {
+        "tags": [
+          "Postagens"
+        ],
+        "summary": "Exclui uma postagem por ID",
+        "operationId": "excluir",
+        "parameters": [
+          {
+            "name": "codigoPostagem",
+            "in": "path",
+            "description": "Código de uma postagem",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "example": "10e49ddf-8f2f-487b-a9cf-1e79335685b0"
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "No Content"
+          },
+          "500": {
+            "$ref": "#/components/responses/InternalServerErrorResponse"
+          }
+        },
+        "security": [
+          {
+            "security_auth": []
+          }
+        ]
+      }
+    },
+    "/postagem/{codigoPostagem}/foto": {
+      "get": {
+        "tags": [
+          "Postagens"
+        ],
+        "summary": "Busca a foto do produto de um restaurante",
+        "operationId": "buscar_2",
+        "parameters": [
+          {
+            "name": "codigoPostagem",
+            "in": "path",
+            "description": "Código de uma postagem",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "example": "10e49ddf-8f2f-487b-a9cf-1e79335685b0"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/FotoPostagemDTO"
+                }
+              },
+              "image/jpeg": {
+                "schema": {
+                  "type": "string",
+                  "format": "binary"
+                }
+              },
+              "image/png": {
+                "schema": {
+                  "type": "string",
+                  "format": "binary"
+                }
+              }
+            }
+          },
+          "406": {
+            "$ref": "#/components/responses/NotAcceptableResponse"
+          },
+          "500": {
+            "$ref": "#/components/responses/InternalServerErrorResponse"
+          }
+        },
+        "security": [
+          {
+            "security_auth": []
+          }
+        ]
+      },
+      "put": {
+        "tags": [
+          "Postagens"
+        ],
+        "summary": "Atualiza foto da postagem",
+        "operationId": "atualizarFoto",
+        "parameters": [
+          {
+            "name": "codigoPostagem",
+            "in": "path",
+            "description": "Código de uma postagem",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "example": "10e49ddf-8f2f-487b-a9cf-1e79335685b0"
+          }
+        ],
+        "requestBody": {
+          "description": "Representação de uma foto",
+          "content": {
+            "multipart/form-data": {
+              "schema": {
+                "$ref": "#/components/schemas/FotoPostagemInput"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/FotoPostagemDTO"
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequestResponse"
+          },
+          "500": {
+            "$ref": "#/components/responses/InternalServerErrorResponse"
+          }
+        },
+        "security": [
+          {
+            "security_auth": []
+          }
+        ]
+      },
+      "delete": {
+        "tags": [
+          "Postagens"
+        ],
+        "summary": "Exclui foto da postagem",
+        "operationId": "excluir_1",
+        "parameters": [
+          {
+            "name": "codigoPostagem",
+            "in": "path",
+            "description": "Código de uma postagem",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "example": "10e49ddf-8f2f-487b-a9cf-1e79335685b0"
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "No Content"
+          },
+          "500": {
+            "$ref": "#/components/responses/InternalServerErrorResponse"
+          }
+        },
+        "security": [
+          {
+            "security_auth": []
+          }
+        ]
+      }
+    },
+    "/grupos/{grupoId}": {
+      "get": {
+        "tags": [
+          "Grupos"
+        ],
+        "summary": "Busca um grupo por ID",
+        "operationId": "buscar_3",
+        "parameters": [
+          {
+            "name": "grupoId",
+            "in": "path",
+            "description": "ID de um grupo",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            },
+            "example": 1
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GrupoDTO"
+                }
+              }
+            }
+          },
+          "406": {
+            "$ref": "#/components/responses/NotAcceptableResponse"
+          },
+          "500": {
+            "$ref": "#/components/responses/InternalServerErrorResponse"
+          }
+        },
+        "security": [
+          {
+            "security_auth": []
+          }
+        ]
+      },
+      "put": {
+        "tags": [
+          "Grupos"
+        ],
+        "summary": "Atualiza um grupo por ID",
+        "operationId": "atualizar_2",
+        "parameters": [
+          {
+            "name": "grupoId",
+            "in": "path",
+            "description": "ID de um grupo",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            },
+            "example": 1
+          }
+        ],
+        "requestBody": {
+          "description": "Representação de um grupo existente",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/GrupoInput"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GrupoDTO"
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequestResponse"
+          },
+          "500": {
+            "$ref": "#/components/responses/InternalServerErrorResponse"
+          }
+        },
+        "security": [
+          {
+            "security_auth": []
+          }
+        ]
+      },
+      "delete": {
+        "tags": [
+          "Grupos"
+        ],
+        "summary": "Exclui um grupo por ID",
+        "operationId": "remover",
+        "parameters": [
+          {
+            "name": "grupoId",
+            "in": "path",
+            "description": "ID de um grupo",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            },
+            "example": 1
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "No Content"
+          },
+          "500": {
+            "$ref": "#/components/responses/InternalServerErrorResponse"
+          }
+        },
+        "security": [
+          {
+            "security_auth": []
+          }
+        ]
+      }
+    },
+    "/grupos/{grupoId}/permissoes/{permissaoId}": {
+      "put": {
+        "tags": [
+          "Grupo Permissao"
+        ],
+        "summary": "Associa um grupo com uma permissão",
+        "operationId": "associar_1",
+        "parameters": [
+          {
+            "name": "grupoId",
+            "in": "path",
+            "description": "ID de um grupo",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            },
+            "example": 1
+          },
+          {
+            "name": "permissaoId",
+            "in": "path",
+            "description": "ID de uma permissão",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            },
+            "example": 1
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "No Content"
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequestResponse"
+          },
+          "500": {
+            "$ref": "#/components/responses/InternalServerErrorResponse"
+          }
+        },
+        "security": [
+          {
+            "security_auth": []
+          }
+        ]
+      },
+      "delete": {
+        "tags": [
+          "Grupo Permissao"
+        ],
+        "summary": "Desassocia um grupo com uma permissão",
+        "operationId": "desassociar_1",
+        "parameters": [
+          {
+            "name": "grupoId",
+            "in": "path",
+            "description": "ID de um grupo",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            },
+            "example": 1
+          },
+          {
+            "name": "permissaoId",
+            "in": "path",
+            "description": "ID de uma permissão",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            },
+            "example": 1
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "No Content"
+          },
+          "500": {
+            "$ref": "#/components/responses/InternalServerErrorResponse"
+          }
+        },
+        "security": [
+          {
+            "security_auth": []
+          }
+        ]
+      }
+    },
+    "/usuarios": {
+      "get": {
+        "tags": [
+          "Usuarios"
+        ],
+        "summary": "Lista os usuários",
+        "operationId": "listar",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CollectionModelUsuarioDTO"
+                }
+              }
+            }
+          },
+          "406": {
+            "$ref": "#/components/responses/NotAcceptableResponse"
+          },
+          "500": {
+            "$ref": "#/components/responses/InternalServerErrorResponse"
+          }
+        },
+        "security": [
+          {
+            "security_auth": []
+          }
+        ]
+      },
+      "post": {
+        "tags": [
+          "Usuarios"
+        ],
+        "summary": "Salva um usuário",
+        "operationId": "salvar",
+        "requestBody": {
+          "description": "Representação de um usuário",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UsuarioComSenhaInput"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "description": "Created",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/UsuarioDTO"
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequestResponse"
+          },
+          "500": {
+            "$ref": "#/components/responses/InternalServerErrorResponse"
+          }
+        },
+        "security": [
+          {
+            "security_auth": []
+          }
+        ]
+      }
+    },
+    "/postagem": {
+      "get": {
+        "tags": [
+          "Postagens"
+        ],
+        "summary": "Lista as postagens",
+        "operationId": "pesquisar",
+        "parameters": [
+          {
+            "name": "filtro",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "$ref": "#/components/schemas/PostagemFilter"
+            }
+          },
+          {
+            "name": "pageable",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "$ref": "#/components/schemas/Pageable"
+            }
+          },
+          {
+            "name": "page",
+            "in": "query",
+            "description": "Número da página (0..N)",
+            "schema": {
+              "type": "integer",
+              "default": 0
+            }
+          },
+          {
+            "name": "size",
+            "in": "query",
+            "description": "Quantidade de elementos por página",
+            "schema": {
+              "type": "integer",
+              "default": 10
+            }
+          },
+          {
+            "name": "sort",
+            "in": "query",
+            "description": "Critério de ordenação: propriedade(asc|desc)."
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PagedModelPostagemResumoDTO"
+                }
+              }
+            }
+          },
+          "406": {
+            "$ref": "#/components/responses/NotAcceptableResponse"
+          },
+          "500": {
+            "$ref": "#/components/responses/InternalServerErrorResponse"
+          }
+        },
+        "security": [
+          {
+            "security_auth": []
+          }
+        ]
+      },
+      "post": {
+        "tags": [
+          "Postagens"
+        ],
+        "summary": "Cria uma postagem",
+        "operationId": "adicionar",
+        "requestBody": {
+          "description": "Representação de uma nova postagem",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/PostagemInput"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "description": "Created",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PostagemDTO"
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequestResponse"
+          },
+          "500": {
+            "$ref": "#/components/responses/InternalServerErrorResponse"
+          }
+        },
+        "security": [
+          {
+            "security_auth": []
+          }
+        ]
+      }
+    },
+    "/postagem/{codigoPostagem}/comentario": {
+      "get": {
+        "tags": [
+          "Comentarios"
+        ],
+        "summary": "Lista os comentários",
+        "operationId": "listar_2",
+        "parameters": [
+          {
+            "name": "codigoPostagem",
+            "in": "path",
+            "description": "Código de uma postagem",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "example": "10e49ddf-8f2f-487b-a9cf-1e79335685b0"
+          },
+          {
+            "name": "pageable",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "$ref": "#/components/schemas/Pageable"
+            }
+          },
+          {
+            "name": "page",
+            "in": "query",
+            "description": "Número da página (0..N)",
+            "schema": {
+              "type": "integer",
+              "default": 0
+            }
+          },
+          {
+            "name": "size",
+            "in": "query",
+            "description": "Quantidade de elementos por página",
+            "schema": {
+              "type": "integer",
+              "default": 10
+            }
+          },
+          {
+            "name": "sort",
+            "in": "query",
+            "description": "Critério de ordenação: propriedade(asc|desc)."
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PageComentarioDTO"
+                }
+              }
+            }
+          },
+          "406": {
+            "$ref": "#/components/responses/NotAcceptableResponse"
+          },
+          "500": {
+            "$ref": "#/components/responses/InternalServerErrorResponse"
+          }
+        },
+        "security": [
+          {
+            "security_auth": []
+          }
+        ]
+      },
+      "post": {
+        "tags": [
+          "Comentarios"
+        ],
+        "summary": "Adiciona um comentário a uma postagem",
+        "operationId": "adicionar_1",
+        "parameters": [
+          {
+            "name": "codigoPostagem",
+            "in": "path",
+            "description": "Código de uma postagem",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "example": "10e49ddf-8f2f-487b-a9cf-1e79335685b0"
+          }
+        ],
+        "requestBody": {
+          "description": "Representação de um novo comentário",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ComentarioInput"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "description": "Created",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ComentarioDTO"
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequestResponse"
+          },
+          "500": {
+            "$ref": "#/components/responses/InternalServerErrorResponse"
+          }
+        },
+        "security": [
+          {
+            "security_auth": []
+          }
+        ]
+      }
+    },
+    "/grupos": {
+      "get": {
+        "tags": [
+          "Grupos"
+        ],
+        "summary": "Lista os grupos",
+        "operationId": "listar_4",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CollectionModelGrupoDTO"
+                }
+              }
+            }
+          },
+          "406": {
+            "$ref": "#/components/responses/NotAcceptableResponse"
+          },
+          "500": {
+            "$ref": "#/components/responses/InternalServerErrorResponse"
+          }
+        },
+        "security": [
+          {
+            "security_auth": []
+          }
+        ]
+      },
+      "post": {
+        "tags": [
+          "Grupos"
+        ],
+        "summary": "Cria um grupo",
+        "operationId": "adicionar_2",
+        "requestBody": {
+          "description": "Representação de um novo grupo",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/GrupoInput"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "description": "Created",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GrupoDTO"
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequestResponse"
+          },
+          "500": {
+            "$ref": "#/components/responses/InternalServerErrorResponse"
+          }
+        },
+        "security": [
+          {
+            "security_auth": []
+          }
+        ]
+      }
+    },
+    "/usuarios/{usuarioId}/grupos": {
+      "get": {
+        "tags": [
+          "Usuarios"
+        ],
+        "summary": "Lista os usuários associados a um grupo",
+        "operationId": "listar_1",
+        "parameters": [
+          {
+            "name": "usuarioId",
+            "in": "path",
+            "description": "ID de um usuário",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            },
+            "example": 1
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CollectionModelGrupoDTO"
+                }
+              }
+            }
+          },
+          "406": {
+            "$ref": "#/components/responses/NotAcceptableResponse"
+          },
+          "500": {
+            "$ref": "#/components/responses/InternalServerErrorResponse"
+          }
+        },
+        "security": [
+          {
+            "security_auth": []
+          }
+        ]
+      }
+    },
+    "/permissoes": {
+      "get": {
+        "tags": [
+          "Permissao"
+        ],
+        "summary": "Lista as permissões",
+        "operationId": "listar_3",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CollectionModelPermissaoDTO"
+                }
+              }
+            }
+          },
+          "406": {
+            "$ref": "#/components/responses/NotAcceptableResponse"
+          },
+          "500": {
+            "$ref": "#/components/responses/InternalServerErrorResponse"
+          }
+        },
+        "security": [
+          {
+            "security_auth": []
+          }
+        ]
+      }
+    },
+    "/grupos/{grupoId}/permissoes": {
+      "get": {
+        "tags": [
+          "Grupo Permissao"
+        ],
+        "summary": "Lista os grupos e suas permissões",
+        "operationId": "listar_5",
+        "parameters": [
+          {
+            "name": "grupoId",
+            "in": "path",
+            "description": "ID de um grupo",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            },
+            "example": 1
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CollectionModelPermissaoDTO"
+                }
+              }
+            }
+          },
+          "406": {
+            "$ref": "#/components/responses/NotAcceptableResponse"
+          },
+          "500": {
+            "$ref": "#/components/responses/InternalServerErrorResponse"
+          }
+        },
+        "security": [
+          {
+            "security_auth": []
+          }
+        ]
+      }
+    },
+    "/postagem/{codigoPostagem}/comentario/{comentarioId}": {
+      "delete": {
+        "tags": [
+          "Comentarios"
+        ],
+        "summary": "Exclui um comentário por id",
+        "operationId": "excluir_2",
+        "parameters": [
+          {
+            "name": "codigoPostagem",
+            "in": "path",
+            "description": "Código de uma postagem",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "example": "10e49ddf-8f2f-487b-a9cf-1e79335685b0"
+          },
+          {
+            "name": "comentarioId",
+            "in": "path",
+            "description": "ID de um comentário",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            },
+            "example": 1
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "No Content"
+          },
+          "500": {
+            "$ref": "#/components/responses/InternalServerErrorResponse"
+          }
+        },
+        "security": [
+          {
+            "security_auth": []
+          }
+        ]
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "Objects": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string",
+            "example": "descricao"
+          },
+          "userMessage": {
+            "type": "string",
+            "example": "A descriçao é inválida"
+          }
+        },
+        "example": "ObjetoProblema"
+      },
+      "Problema": {
+        "type": "object",
+        "properties": {
+          "status": {
+            "type": "integer",
+            "format": "int32",
+            "example": 400
+          },
+          "timestamp": {
+            "type": "string",
+            "format": "date-time",
+            "example": "2024-08-02T23:00:30-03:00"
+          },
+          "type": {
+            "type": "string",
+            "example": "https://socialpost.com.br/dados-invalidos"
+          },
+          "title": {
+            "type": "string",
+            "example": "Dados inválidos."
+          },
+          "detail": {
+            "type": "string",
+            "example": "Um ou mais campos estão inválidos. Faça o preenchimento correto e tente novamente."
+          },
+          "userMessage": {
+            "type": "string",
+            "example": "Um ou mais campos estão inválidos. Faça o preenchimento correto e tente novamente."
+          },
+          "objects": {
+            "type": "array",
+            "example": "Lista de objetos ou campos que geraram o erro",
+            "items": {
+              "$ref": "#/components/schemas/Objects"
+            }
+          }
+        }
+      },
+      "UsuarioInput": {
+        "required": [
+          "email",
+          "nome"
+        ],
+        "type": "object",
+        "properties": {
+          "nome": {
+            "type": "string",
+            "example": "Elon Musk - Foguetes"
+          },
+          "email": {
+            "type": "string",
+            "example": "junior88@gmail.com"
+          }
+        }
+      },
+      "Links": {
+        "type": "object",
+        "additionalProperties": {
+          "$ref": "#/components/schemas/Link"
+        }
+      },
+      "UsuarioDTO": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "format": "int64",
+            "example": 1
+          },
+          "nome": {
+            "type": "string",
+            "example": "Sebastiao da Galera"
+          },
+          "email": {
+            "type": "string",
+            "example": "email@example.com"
+          },
+          "_links": {
+            "$ref": "#/components/schemas/Links"
+          }
+        }
+      },
+      "SenhaInput": {
+        "required": [
+          "novaSenha",
+          "senhaAtual"
+        ],
+        "type": "object",
+        "properties": {
+          "senhaAtual": {
+            "type": "string",
+            "example": "123"
+          },
+          "novaSenha": {
+            "type": "string",
+            "example": "12345"
+          }
+        }
+      },
+      "PostagemUpdateInput": {
+        "required": [
+          "descricao"
+        ],
+        "type": "object",
+        "properties": {
+          "descricao": {
+            "type": "string"
+          }
+        }
+      },
+      "ComentarioDTO": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "format": "int64",
+            "example": 1
+          },
+          "texto": {
+            "type": "string",
+            "example": "Color sit amet, consectetur adipiscing elit. Curabitur condimentum consectetur finibus. Praesent id vehicula eros."
+          },
+          "dataComentario": {
+            "type": "string",
+            "format": "date-time",
+            "example": "2024-08-27T15:42:46.6773753-03:00"
+          },
+          "usuario": {
+            "$ref": "#/components/schemas/UsuarioAutorResumoDTO"
+          },
+          "_links": {
+            "$ref": "#/components/schemas/Links"
+          }
+        }
+      },
+      "PostagemDTO": {
+        "type": "object",
+        "properties": {
+          "codigo": {
+            "type": "string",
+            "example": "10e49ddf-8f2f-487b-a9cf-1e79335685b0"
+          },
+          "autor": {
+            "$ref": "#/components/schemas/UsuarioAutorResumoDTO"
+          },
+          "dataPostagem": {
+            "type": "string",
+            "format": "date-time",
+            "example": "2019-11-02T23:00:30-03:00"
+          },
+          "descricao": {
+            "type": "string",
+            "example": "Foguetes Elon Musk..."
+          },
+          "comentarios": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ComentarioDTO"
+            }
+          },
+          "_links": {
+            "$ref": "#/components/schemas/Links"
+          }
+        }
+      },
+      "UsuarioAutorResumoDTO": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "format": "int64",
+            "example": 1
+          },
+          "nome": {
+            "type": "string",
+            "example": "Sebastião da Galera"
+          }
+        }
+      },
+      "FotoPostagemInput": {
+        "required": [
+          "arquivo",
+          "descricao"
+        ],
+        "type": "object",
+        "properties": {
+          "arquivo": {
+            "type": "string",
+            "format": "binary"
+          },
+          "descricao": {
+            "type": "string"
+          }
+        }
+      },
+      "FotoPostagemDTO": {
+        "type": "object",
+        "properties": {
+          "nomeArquivo": {
+            "type": "string"
+          },
+          "contentType": {
+            "type": "string"
+          },
+          "tamanho": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "_links": {
+            "$ref": "#/components/schemas/Links"
+          }
+        }
+      },
+      "GrupoInput": {
+        "required": [
+          "nome"
+        ],
+        "type": "object",
+        "properties": {
+          "nome": {
+            "type": "string",
+            "example": "Administrador"
+          }
+        }
+      },
+      "GrupoDTO": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "format": "int64",
+            "example": 1
+          },
+          "nome": {
+            "type": "string",
+            "example": "Administrador"
+          },
+          "_links": {
+            "$ref": "#/components/schemas/Links"
+          }
+        }
+      },
+      "UsuarioComSenhaInput": {
+        "required": [
+          "email",
+          "nome",
+          "senha"
+        ],
+        "type": "object",
+        "properties": {
+          "nome": {
+            "type": "string",
+            "example": "Elon Musk - Foguetes"
+          },
+          "email": {
+            "type": "string",
+            "example": "junior88@gmail.com"
+          },
+          "senha": {
+            "type": "string",
+            "example": "123"
+          }
+        }
+      },
+      "PostagemInput": {
+        "required": [
+          "descricao"
+        ],
+        "type": "object",
+        "properties": {
+          "descricao": {
+            "type": "string",
+            "example": "Color sit amet, consectetur adipiscing elit. Curabitur condimentum consectetur finibus. Praesent id vehicula eros."
+          }
+        }
+      },
+      "ComentarioInput": {
+        "required": [
+          "texto"
+        ],
+        "type": "object",
+        "properties": {
+          "texto": {
+            "type": "string",
+            "example": "Ótima postagem!!!"
+          }
+        }
+      },
+      "CollectionModelUsuarioDTO": {
+        "type": "object",
+        "properties": {
+          "_embedded": {
+            "type": "object",
+            "properties": {
+              "usuarios": {
+                "type": "array",
+                "items": {
+                  "$ref": "#/components/schemas/UsuarioDTO"
+                }
+              }
+            }
+          },
+          "_links": {
+            "$ref": "#/components/schemas/Links"
+          }
+        }
+      },
+      "CollectionModelGrupoDTO": {
+        "type": "object",
+        "properties": {
+          "_embedded": {
+            "type": "object",
+            "properties": {
+              "grupos": {
+                "type": "array",
+                "items": {
+                  "$ref": "#/components/schemas/GrupoDTO"
+                }
+              }
+            }
+          },
+          "_links": {
+            "$ref": "#/components/schemas/Links"
+          }
+        }
+      },
+      "PostagemFilter": {
+        "type": "object",
+        "properties": {
+          "autorId": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "dataPostagem": {
+            "type": "string",
+            "format": "date-time"
+          }
+        }
+      },
+      "Pageable": {
+        "type": "object",
+        "properties": {
+          "page": {
+            "minimum": 0,
+            "type": "integer",
+            "format": "int32"
+          },
+          "size": {
+            "minimum": 1,
+            "type": "integer",
+            "format": "int32"
+          },
+          "sort": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          }
+        }
+      },
+      "PageMetadata": {
+        "type": "object",
+        "properties": {
+          "size": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "totalElements": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "totalPages": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "number": {
+            "type": "integer",
+            "format": "int64"
+          }
+        }
+      },
+      "PagedModelPostagemResumoDTO": {
+        "type": "object",
+        "properties": {
+          "_embedded": {
+            "type": "object",
+            "properties": {
+              "postagens": {
+                "type": "array",
+                "items": {
+                  "$ref": "#/components/schemas/PostagemResumoDTO"
+                }
+              }
+            }
+          },
+          "_links": {
+            "$ref": "#/components/schemas/Links"
+          },
+          "page": {
+            "$ref": "#/components/schemas/PageMetadata"
+          }
+        }
+      },
+      "PostagemResumoDTO": {
+        "type": "object",
+        "properties": {
+          "codigo": {
+            "type": "string",
+            "example": "10e49ddf-8f2f-487b-a9cf-1e79335685b0"
+          },
+          "dataPostagem": {
+            "type": "string",
+            "format": "date-time",
+            "example": "2019-11-02T23:00:30-03:00"
+          },
+          "autor": {
+            "$ref": "#/components/schemas/UsuarioAutorResumoDTO"
+          },
+          "_links": {
+            "$ref": "#/components/schemas/Links"
+          }
+        }
+      },
+      "PageComentarioDTO": {
+        "type": "object",
+        "properties": {
+          "totalElements": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "totalPages": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "size": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "content": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ComentarioDTO"
+            }
+          },
+          "number": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "sort": {
+            "$ref": "#/components/schemas/Sort"
+          },
+          "first": {
+            "type": "boolean"
+          },
+          "last": {
+            "type": "boolean"
+          },
+          "numberOfElements": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "pageable": {
+            "$ref": "#/components/schemas/PageableObject"
+          },
+          "empty": {
+            "type": "boolean"
+          }
+        }
+      },
+      "PageableObject": {
+        "type": "object",
+        "properties": {
+          "offset": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "sort": {
+            "$ref": "#/components/schemas/Sort"
+          },
+          "pageSize": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "pageNumber": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "paged": {
+            "type": "boolean"
+          },
+          "unpaged": {
+            "type": "boolean"
+          }
+        }
+      },
+      "Sort": {
+        "type": "object",
+        "properties": {
+          "empty": {
+            "type": "boolean"
+          },
+          "sorted": {
+            "type": "boolean"
+          },
+          "unsorted": {
+            "type": "boolean"
+          }
+        }
+      },
+      "CollectionModelPermissaoDTO": {
+        "type": "object",
+        "properties": {
+          "_embedded": {
+            "type": "object",
+            "properties": {
+              "permissoes": {
+                "type": "array",
+                "items": {
+                  "$ref": "#/components/schemas/PermissaoDTO"
+                }
+              }
+            }
+          },
+          "_links": {
+            "$ref": "#/components/schemas/Links"
+          }
+        }
+      },
+      "PermissaoDTO": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "format": "int64",
+            "example": 1
+          },
+          "nome": {
+            "type": "string",
+            "example": "CONSULTAR_POSTAGEM"
+          },
+          "_links": {
+            "$ref": "#/components/schemas/Links"
+          }
+        }
+      },
+      "Link": {
+        "type": "object",
+        "properties": {
+          "href": {
+            "type": "string"
+          },
+          "hreflang": {
+            "type": "string"
+          },
+          "title": {
+            "type": "string"
+          },
+          "type": {
+            "type": "string"
+          },
+          "deprecation": {
+            "type": "string"
+          },
+          "profile": {
+            "type": "string"
+          },
+          "name": {
+            "type": "string"
+          },
+          "templated": {
+            "type": "boolean"
+          }
+        }
+      }
+    },
+    "responses": {
+      "BadRequestResponse": {
+        "description": "Requisição inválida",
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/Problema"
+            }
+          }
+        }
+      },
+      "NotAcceptableResponse": {
+        "description": "Recurso não possui representação que poderia ser aceita pelo consumidor",
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/Problema"
+            }
+          }
+        }
+      },
+      "InternalServerErrorResponse": {
+        "description": "Erro interno no servidor",
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/Problema"
+            }
+          }
+        }
+      },
+      "NotFoundResponse": {
+        "description": "Recurso não encontrado",
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/Problema"
+            }
+          }
+        }
+      }
+    },
+    "securitySchemes": {
+      "security_auth": {
+        "type": "oauth2",
+        "flows": {
+          "authorizationCode": {
+            "authorizationUrl": "http://localhost:8080/oauth/authorize",
+            "tokenUrl": "http://localhost:8080/oauth/token",
+            "scopes": {
+              "READ": "read scope",
+              "WRITE": "write scope"
+            }
+          }
+        }
+      }
+    }
+  }
+}

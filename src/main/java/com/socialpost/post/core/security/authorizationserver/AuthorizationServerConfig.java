@@ -1,120 +1,135 @@
 package com.socialpost.post.core.security.authorizationserver;
 
-import java.security.KeyPair;
-import java.security.interfaces.RSAPublicKey;
-import java.util.Arrays;
+import java.io.InputStream;
+import java.security.KeyStore;
+import java.util.HashSet;
+import java.util.Set;
 
-import javax.sql.DataSource;
-
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.core.userdetails.UserDetailsService;
-import org.springframework.security.oauth2.config.annotation.configurers.ClientDetailsServiceConfigurer;
-import org.springframework.security.oauth2.config.annotation.web.configuration.AuthorizationServerConfigurerAdapter;
-import org.springframework.security.oauth2.config.annotation.web.configuration.EnableAuthorizationServer;
-import org.springframework.security.oauth2.config.annotation.web.configurers.AuthorizationServerEndpointsConfigurer;
-import org.springframework.security.oauth2.config.annotation.web.configurers.AuthorizationServerSecurityConfigurer;
-import org.springframework.security.oauth2.provider.CompositeTokenGranter;
-import org.springframework.security.oauth2.provider.TokenGranter;
-import org.springframework.security.oauth2.provider.approval.ApprovalStore;
-import org.springframework.security.oauth2.provider.approval.TokenApprovalStore;
-import org.springframework.security.oauth2.provider.token.TokenEnhancerChain;
-import org.springframework.security.oauth2.provider.token.TokenStore;
-import org.springframework.security.oauth2.provider.token.store.JwtAccessTokenConverter;
-import org.springframework.security.oauth2.provider.token.store.KeyStoreKeyFactory;
+import org.springframework.core.Ordered;
+import org.springframework.core.annotation.Order;
+import org.springframework.core.io.Resource;
+import org.springframework.jdbc.core.JdbcOperations;
+import org.springframework.security.config.annotation.web.builders.HttpSecurity;
+import org.springframework.security.config.annotation.web.configurers.oauth2.server.authorization.OAuth2AuthorizationServerConfigurer;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.userdetails.User;
+import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.oauth2.server.authorization.InMemoryOAuth2AuthorizationConsentService;
+import org.springframework.security.oauth2.server.authorization.JdbcOAuth2AuthorizationConsentService;
+import org.springframework.security.oauth2.server.authorization.JdbcOAuth2AuthorizationService;
+import org.springframework.security.oauth2.server.authorization.OAuth2AuthorizationConsentService;
+import org.springframework.security.oauth2.server.authorization.OAuth2AuthorizationService;
+import org.springframework.security.oauth2.server.authorization.client.JdbcRegisteredClientRepository;
+import org.springframework.security.oauth2.server.authorization.client.RegisteredClientRepository;
+import org.springframework.security.oauth2.server.authorization.config.ProviderSettings;
+import org.springframework.security.oauth2.server.authorization.token.JwtEncodingContext;
+import org.springframework.security.oauth2.server.authorization.token.OAuth2TokenCustomizer;
+import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.util.matcher.RequestMatcher;
 
-import com.nimbusds.jose.JWSAlgorithm;
 import com.nimbusds.jose.jwk.JWKSet;
-import com.nimbusds.jose.jwk.KeyUse;
 import com.nimbusds.jose.jwk.RSAKey;
+import com.nimbusds.jose.jwk.source.ImmutableJWKSet;
+import com.nimbusds.jose.jwk.source.JWKSource;
+import com.nimbusds.jose.proc.SecurityContext;
+import com.socialpost.post.domain.model.Usuario;
+import com.socialpost.post.domain.repository.UsuarioRepository;
 
 @Configuration
-@EnableAuthorizationServer
-public class AuthorizationServerConfig extends AuthorizationServerConfigurerAdapter {
-	
-	@Autowired
-	private AuthenticationManager authenticationManager;
-	
-	@Autowired
-	private UserDetailsService userDetailsService;
-	
-	@Autowired
-	private JwtKeyStoreProperties jwtKeyStoreProperties;
-	
-	@Autowired
-	private DataSource dataSource;
+public class AuthorizationServerConfig {
 
-	@Override
-	public void configure(ClientDetailsServiceConfigurer clients) throws Exception {
-		clients.jdbc(dataSource);
-	}
-	
-	@Override
-	public void configure(AuthorizationServerSecurityConfigurer security) throws Exception {
-		security.checkTokenAccess("permitAll()");
-	}
-	
-	@Override
-	public void configure(AuthorizationServerEndpointsConfigurer endpoints) throws Exception {
-		var enhancerChain = new TokenEnhancerChain();
-		enhancerChain.setTokenEnhancers(
-				Arrays.asList(new JwtCustomsClaimsTokenEnhancer(), jwtAccesTokenConverter()));
+	@Bean
+	@Order(Ordered.HIGHEST_PRECEDENCE)
+	public SecurityFilterChain authFilterChain(HttpSecurity http) throws Exception {
+//		OAuth2AuthorizationServerConfiguration.applyDefaultSecurity(http);
+		OAuth2AuthorizationServerConfigurer<HttpSecurity> authorizationServerConfigurer =
+				new OAuth2AuthorizationServerConfigurer<>();
 		
-		endpoints.authenticationManager(authenticationManager)
-		.userDetailsService(userDetailsService)
-		.reuseRefreshTokens(false)
-		.accessTokenConverter(jwtAccesTokenConverter())
-		.tokenEnhancer(enhancerChain)
-		.approvalStore(approvalStore(endpoints.getTokenStore()))
-		.tokenGranter(tokenGranter(endpoints));
-	}
+		authorizationServerConfigurer.authorizationEndpoint(customizer -> customizer.consentPage("/oauth2/consent"));
 	
-	private ApprovalStore approvalStore(TokenStore tokenStore) {
-		var approvalStore = new TokenApprovalStore();
-		approvalStore.setTokenStore(tokenStore);
+		RequestMatcher endpointsMatcher = authorizationServerConfigurer
+				.getEndpointsMatcher();
+
+		http
+			.requestMatcher(endpointsMatcher)
+			.authorizeRequests(authorizeRequests ->
+				authorizeRequests.anyRequest().authenticated()
+			)
+			.csrf(csrf -> csrf.ignoringRequestMatchers(endpointsMatcher))
+			.apply(authorizationServerConfigurer);
 		
-		return approvalStore;
+		return http.formLogin(customizer -> customizer.loginPage("/login")).build();
 	}
 	
 	@Bean
-	public JWKSet jwkSet() {
-		RSAKey.Builder builder = new RSAKey.Builder((RSAPublicKey) keyPair().getPublic())
-				.keyUse(KeyUse.SIGNATURE)
-				.algorithm(JWSAlgorithm.RS256)
-				.keyID("socialPost-key-id");
-		
-		return new JWKSet(builder.build());
-	}	
+	public ProviderSettings providerSettings(SocialPostSecurityProperties properties) {
+		return ProviderSettings.builder()
+				.issuer(properties.getProviderUrl())
+				.build();
+	}
 	
 	@Bean
-	public JwtAccessTokenConverter jwtAccesTokenConverter() {
-		var jwtAccessTokenConverter = new JwtAccessTokenConverter();
+	public RegisteredClientRepository registeredClientRepository(PasswordEncoder passwordEncoder, JdbcOperations jdbcOperations) {
 		
-		jwtAccessTokenConverter.setKeyPair(keyPair());
-		
-		return jwtAccessTokenConverter;
+		return new JdbcRegisteredClientRepository(jdbcOperations);
 	}
 	
-	private KeyPair keyPair() {
-		var keyStorePass = jwtKeyStoreProperties.getPassword();
-		var keyPairAlias = jwtKeyStoreProperties.getKeyPairAlias();
+	@Bean
+    public OAuth2AuthorizationService oAuth2AuthorizationService(JdbcOperations jdbcOperations,
+                                                                 RegisteredClientRepository registeredClientRepository) {
+        return new JdbcOAuth2AuthorizationService(
+                jdbcOperations,
+                registeredClientRepository
+        );
+    }
+	
+	@Bean
+	public JWKSource<SecurityContext> jwkSource(JwtKeyStoreProperties properties) throws Exception {
+		char[] keyStorePass = properties.getPassword().toCharArray();
+		String keypairAlias = properties.getKeyPairAlias();
 		
-		var keyStoreKeyFactory = new KeyStoreKeyFactory(jwtKeyStoreProperties.getJksLocation(), keyStorePass.toCharArray());
+		Resource jksLocation = properties.getJksLocation();
+		InputStream inputStream = jksLocation.getInputStream();
+		KeyStore keyStore = KeyStore.getInstance("JKS");
+		keyStore.load(inputStream, keyStorePass);
 		
-		return keyStoreKeyFactory.getKeyPair(keyPairAlias);
+		RSAKey rsaKey = RSAKey.load(keyStore, keypairAlias, keyStorePass);
+		
+		return new ImmutableJWKSet<>(new JWKSet(rsaKey));
 	}
 	
-	private TokenGranter tokenGranter(AuthorizationServerEndpointsConfigurer endpoints) {
-		var pkceAuthorizationCodeTokenGranter = new PkceAuthorizationCodeTokenGranter(endpoints.getTokenServices(),
-				endpoints.getAuthorizationCodeServices(), endpoints.getClientDetailsService(),
-				endpoints.getOAuth2RequestFactory());
-		
-		var granters = Arrays.asList(
-				pkceAuthorizationCodeTokenGranter, endpoints.getTokenGranter());
-		
-		return new CompositeTokenGranter(granters);
+	@Bean
+    public OAuth2TokenCustomizer<JwtEncodingContext> jwtCustomizer(UsuarioRepository usuarioRepository) {
+        return context -> {
+            Authentication authentication = context.getPrincipal();
+            if (authentication.getPrincipal() instanceof User) {
+                User user = (User) authentication.getPrincipal();
+
+                Usuario usuario = usuarioRepository.findByEmail(user.getUsername()).orElseThrow();
+
+                Set<String> authorities = new HashSet<>();
+                for (GrantedAuthority authority : user.getAuthorities()) {
+                    authorities.add(authority.getAuthority());
+                }
+
+                context.getClaims().claim("usuario_id", usuario.getId().toString());
+                context.getClaims().claim("authorities", authorities);
+            }
+        };
+    }
+	
+	@Bean
+	public OAuth2AuthorizationConsentService consentService(JdbcOperations jdbcOperation, 
+			RegisteredClientRepository clientRepository) {
+		return new JdbcOAuth2AuthorizationConsentService(jdbcOperation, clientRepository);
+	}
+	
+	@Bean
+	public Oauth2AuthorizationQueryService auth2AuthorizationQueryService(JdbcOperations jdbcOperations, RegisteredClientRepository repository) {
+		return new JdbcOauth2AuthorizationQueryService(jdbcOperations, repository);
 	}
 	
 }
