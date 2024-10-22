@@ -19,8 +19,6 @@ public class SocialPostSecurity {
 	}
 
 	public Long getUsuarioId() {
-//		Jwt jwt =(Jwt) getAuthentication().getPrincipal();
-//		return jwt.getClaim("usuario_id");
 		
 		Jwt jwt = (Jwt) getAuthentication().getPrincipal();
 	    

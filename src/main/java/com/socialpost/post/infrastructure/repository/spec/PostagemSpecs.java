@@ -2,7 +2,7 @@ package com.socialpost.post.infrastructure.repository.spec;
 
 import java.util.ArrayList;
 
-import javax.persistence.criteria.Predicate;
+import jakarta.persistence.criteria.Predicate;
 
 import org.springframework.data.jpa.domain.Specification;
 
@@ -17,7 +17,7 @@ public class PostagemSpecs {
 			var predicates = new ArrayList<Predicate>();
 			
 			if (filtro.getAutorId() != null) {
-				predicates.add(builder.equal(root.get("autor"), filtro.getAutorId()));
+				predicates.add(builder.equal(root.get("autor").get("id"), filtro.getAutorId()));
 			}
 			
 			if (filtro.getDataPostagem() != null) {

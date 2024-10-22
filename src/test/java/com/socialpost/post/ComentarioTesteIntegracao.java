@@ -5,8 +5,6 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import java.time.OffsetDateTime;
 
-import javax.validation.ConstraintViolationException;
-
 import org.flywaydb.core.Flyway;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -23,6 +21,8 @@ import com.socialpost.post.domain.model.Comentario;
 import com.socialpost.post.domain.model.Usuario;
 import com.socialpost.post.domain.repository.ComentarioRepository;
 import com.socialpost.post.domain.service.ComentarioPostagemService;
+
+import jakarta.validation.ConstraintViolationException;
 
 @SpringBootTest()
 //transactional evita erro lazyloading no metodo que busca uma lista de comentarios

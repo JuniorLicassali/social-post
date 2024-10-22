@@ -1,14 +1,13 @@
 package com.socialpost.post.api.dto.input;
 
-import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.NotNull;
-
 import org.springframework.http.MediaType;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.socialpost.post.core.validation.FileContentType;
 import com.socialpost.post.core.validation.FileSize;
 
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import lombok.Getter;
 import lombok.Setter;
 

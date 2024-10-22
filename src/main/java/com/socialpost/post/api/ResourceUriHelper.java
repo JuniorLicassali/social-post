@@ -2,7 +2,7 @@ package com.socialpost.post.api;
 
 import java.net.URI;
 
-import javax.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpServletResponse;
 
 import org.springframework.http.HttpHeaders;
 import org.springframework.web.context.request.RequestContextHolder;
