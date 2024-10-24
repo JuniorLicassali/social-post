@@ -14,7 +14,7 @@ Desenvolvida seguindo as melhores práticas do mercado, esta API parte do básic
 - Migração e Versionamento de Banco de Dados: Flyway
 
 ## Modelo conceitual
-![Modelo Conceitual](https://github.com/JuniorLicassali/social-post/blob/main/SocialPost%20-%20Diagrama%20de%20classes.png)
+![Modelo Conceitual](https://github.com/JuniorLicassali/social-post/blob/main/images/SocialPost%20-%20Diagrama%20de%20classes.png)
 
 # Tecnologias utilizadas
 ## Back end
@@ -58,57 +58,68 @@ Se você quiser alterar qualquer coisa na massa de dados, basta acessar o arquiv
 
 ## Documentação da API
 
-A documentação da API pode ser acessada via Swagger na URL: [Swagger UI](http://127.0.0.1:8080/swagger-ui/index.html).
+A documentação da API pode ser acessada via Swagger na URL: http://127.0.0.1:8080/swagger-ui/index.html
 
 ## Endpoints
 
-Para uma melhor compreensão dos endpoints disponíveis na API, recomenda-se acessar a documentação via Swagger no lik acima.
+Para uma melhor compreensão dos endpoints disponíveis na API, recomenda-se acessar a documentação via Swagger no link acima.
 
-Além disso, você pode acessar a aplicação diretamente em [http://localhost:8080/](http://localhost:8080/) sem saber o correto caminho dos recursos. A API possui linkagem através do HATEOAS, permitindo uma navegação fácil e intuitiva, sem a necessidade de memorizar as URLs dos diferentes recursos.
+Além disso, você pode acessar a aplicação diretamente em [http://localhost:8080/](http://localhost:8080/) sem saber o caminho correto dos recursos. A API possui linkagem através do HATEOAS, permitindo uma navegação fácil e intuitiva, sem a necessidade de memorizar as URLs dos diferentes recursos.
 
 ## Autenticação
 
 A API oferece dois tipos de fluxo de autenticação: **Client Credentials** e **Authorization Code**.
 
-### Client Credentials
+## Client Credentials
 
 Para usar o fluxo de Client Credentials:
 
 1. No Postman ou Insomnia, faça um POST para a seguinte URL: http://localhost:8080/oauth2/token
 
 2. Utilize a autenticação Basic Auth e passe as seguintes credenciais:
-- **Client ID**: `socialpost-backend`
-- **Client Secret**: `backend123`
+- **Username**: `socialpost-backend`
+- **Password**: `backend123`
+
+![Authorization CC](https://github.com/JuniorLicassali/social-post/blob/main/images/Authorization_CC.jpg)
 
 3. Após a requisição, copie o `access_token` retornado e utilize-o nas requisições seguintes como um Bearer Token.
 
-### Authorization Code
+![Body CC](https://github.com/JuniorLicassali/social-post/blob/main/images/Body_CC.jpg)
+
+## Authorization Code
 
 Para usar o fluxo de Authorization Code:
 
-1. Acesse a seguinte URL no seu navegador: http://localhost:8080/oauth2/authorize?response_type=code&client_id=socialpostweb&state=abc&redirect_uri=http://127.0.0.1:8080/authorized&scope=READ WRITE&code_challenge=bKE9UspwyIPg8LsQHkJaiehiTeUdstI5JZOvaoQRgJA&code_challenge_method=S256
+1. Acesse a seguinte URL no seu navegador: http://localhost:8080/oauth2/authorize?response_type=code&client_id=socialpostweb&state=abc&redirect_uri=http://127.0.0.1:8080/authorized&scope=READ%20WRITE&code_challenge=bKE9UspwyIPg8LsQHkJaiehiTeUdstI5JZOvaoQRgJA&code_challenge_method=S256
 
 2. Ao aparecer a tela de login, preencha os campos:
 - **Email**: `email@example.com`
 - **Senha**: `123`
 
-3. Aceite os escopos solicitados. Após o redirecionamento, copie da URL o campo `code=codigogerado`.
+![Login ac](https://github.com/JuniorLicassali/social-post/blob/main/images/login_AC.jpg)
 
-4. Com o código copiado, faça um POST para a seguinte URL: http://localhost:8080/oauth2/token
+3. Aceite os escopos solicitados.
 
-5. Utilize a autenticação Basic Auth e passe as seguintes credenciais:
-- **Username**: `socialpostweb`
-- **Password**: `web123`
+![Scope ac](https://github.com/JuniorLicassali/social-post/blob/main/images/scope_AC.jpg)
 
-6. No corpo da requisição, passe os seguintes parâmetros:
-- **grant_type**: `authorization_code`
-- **code**: `codePegoDaUrl` (substitua `codePegoDaUrl` pelo código copiado)
-- **redirect_uri**: `http://127.0.0.1:8080/authorized`
-- **code_verifier**: `abc123`
+4. Copie da URL o código gerado no campo `code`
+![Code ac](https://github.com/JuniorLicassali/social-post/blob/main/images/code_AC.jpg)
 
-Após realizar esses passos, você receberá um `access_token` que poderá ser utilizado para autenticar suas requisições.
+5. Com o código copiado, faça um POST para a seguinte URL: http://localhost:8080/oauth2/token
 
+    Utilize a autenticação Basic Auth e passe as seguintes credenciais:
+    - **Username**: `socialpostweb`
+    - **Password**: `web123`
+    
+    No corpo da requisição, passe os seguintes parâmetros:
+    - **grant_type**: `authorization_code`
+    - **code**: `codePegoDaUrl` (substitua `codePegoDaUrl` pelo código copiado)
+    - **redirect_uri**: `http://127.0.0.1:8080/authorized`
+    - **code_verifier**: `abc123`
 
+  ![Code ac](https://github.com/JuniorLicassali/social-post/blob/main/images/token_AC.jpg)
+
+Após realizar esses passos, o `access_token` obtido poderá ser utilizado para autenticar suas requisições.
 
 # Autor
 
