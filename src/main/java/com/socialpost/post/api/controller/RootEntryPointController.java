@@ -18,7 +18,7 @@ public class RootEntryPointController {
 	@Autowired
 	private PostLinks postLinks;
 	
-	@GetMapping
+	@GetMapping("/")
 	@Operation(hidden = true)
 	public RootEntryPointDTO root() {
 		var rootEntryPointDTO = new RootEntryPointDTO();

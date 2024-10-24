@@ -23,7 +23,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 @Tag(name = "Postagens")
 public interface PostagemFotoControllerOpenApi {
 	
-	@Operation(summary = "Busca a foto do produto de um restaurante", responses = {
+	@Operation(summary = "Busca a foto de uma postagem", responses = {
 			@ApiResponse(responseCode = "200", content = {
 					@Content(mediaType = "application/json", schema = @Schema(implementation = FotoPostagemDTO.class)),
 					@Content(mediaType = "image/jpeg", schema = @Schema(type = "string", format = "binary")),
